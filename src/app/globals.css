@@ -19,8 +19,37 @@
   }
 }
 
+/* ------------------- Fonts Face ---------------------- */
+
+@font-face {
+  font-family: 'Fustat';
+  src: url('/fonts/Fustat/Fustat-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Jolly Lodger';
+  src: url('/fonts/Jolly_Lodger/JollyLodger-Regular.ttf') format('truetype');
+}
+
+/* ------------------- Fonts Face ---------------------- */
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Fustat', Arial, Helvetica, sans-serif;
+}
+
+.caption_title {
+  font-family: "Jolly Lodger" !important;
+}
+
+
+/* --------------- Screen ------------------ */
+
+@media (min-width: 1440px) {
+  .screenFrame {
+    --screenContentWidth: 1400px;
+    padding-left: calc((100vw - var(--screenContentWidth)) / 2);
+    padding-right: calc((100vw - var(--screenContentWidth)) / 2);
+  }
 }
