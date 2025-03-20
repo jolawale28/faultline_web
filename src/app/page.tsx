@@ -155,7 +155,7 @@ export default function Home () {
             </div>
           </div>
         </div>
-      </header>
+      </header> 
 
       <main className=''>
         <section className='py-24 relative overflow-hidden bg-[#1E1E1E] screenFrame px-[20px]'>
