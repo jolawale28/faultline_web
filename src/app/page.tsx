@@ -12,7 +12,7 @@ import Link from 'next/link'
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './Icons'
 import NavBar from './components/homepage/NavBar'
 
-export default function Home () {
+export default function Home() {
   return (
     <>
       <header className="bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center">
@@ -155,7 +155,7 @@ export default function Home () {
             </div>
           </div>
         </div>
-      </header> 
+      </header>
 
       <main className=''>
         <section className='py-24 relative overflow-hidden bg-[#1E1E1E] screenFrame px-[20px]'>
@@ -310,60 +310,89 @@ export default function Home () {
 
         <section className='py-24 screenFrame px-[20px] bg-[url(/images/upcoming_release_bg.png)] bg-cover bg-center relative'>
           {/* <div className='absolute inset-0 backdrop-blur-md bg-gray-300/5'></div> */}
-          <div>
-            <h1 className='text-4xl mb-8 uppercase font-bold bg-gradient-to-r from-white via-[#FF9500] to-[#FF9500] to-90% bg-clip-text text-transparent'>
-              Upcoming Release
-            </h1>
-            <div className='flex lg:flex-row flex-col space-y-5 gap-5'>
-              <div className='lg:basis-[400px] basis-auto grow-0 backdrop-blur-md bg-gray-300/10 rounded-2xl p-5 flex flex-col gap-y-2 text-white'>
-                <div className='flex gap-x-5'>
-                  <div className='size-24 relative overflow-hidden rounded-lg shrink-0'>
-                    <Image
-                      src='/images/new_release.png'
-                      fill
-                      objectFit='cover'
-                      alt='new release'
-                    />
-                  </div>
-                  <div className='flex flex-col justify-between grow text-sm'>
-                    <div className='font-bold text-base'>DND</div>
-                    <div>Partyat4 ft Bobby Em</div>
-                    <div>Music</div>
-                    <div className='flex justify-between items-center'>
-                      <div className='flex items-center gap-x-2'>
-                        <Clock size={20} />
-                        April 25th
-                      </div>
-                      <Link
-                        href=''
-                        className='py-2 px-4 rounded-full bg-white text-black font-bold'
-                      >
-                        Preorder Now
-                      </Link>
+          <h1 className='text-4xl mb-8 uppercase font-bold bg-gradient-to-r from-white via-[#FF9500] to-[#FF9500] to-90% bg-clip-text text-transparent'>
+            Upcoming Release
+          </h1>
+          <div className='flex lg:flex-row flex-col space-y-5 gap-5'>
+            <div className='lg:basis-[400px] basis-auto grow-0 backdrop-blur-md bg-gray-300/10 rounded-2xl p-5 flex flex-col gap-y-2 text-white'>
+              <div className='flex gap-x-5'>
+                <div className='size-24 relative overflow-hidden rounded-lg shrink-0'>
+                  <Image
+                    src='/images/new_release.png'
+                    fill
+                    objectFit='cover'
+                    alt='new release'
+                  />
+                </div>
+                <div className='flex flex-col justify-between grow text-sm'>
+                  <div className='font-bold text-base'>DND</div>
+                  <div>Partyat4 ft Bobby Em</div>
+                  <div>Music</div>
+                  <div className='flex justify-between items-center'>
+                    <div className='flex items-center gap-x-2'>
+                      <Clock size={20} />
+                      April 25th
                     </div>
+                    <Link
+                      href=''
+                      className='py-2 px-4 rounded-full bg-white text-black font-bold'
+                    >
+                      Preorder Now
+                    </Link>
                   </div>
-                </div>
-              </div>
-
-              <div className = "flex items-center justify-around grow text-center">
-                <div className='text-white flex flex-col'>
-                  <div className = "lg:text-[64px] text-[40px] h-fit">1</div>
-                  <div>Days</div>
-                </div>
-                <div className='text-white flex flex-col'>
-                  <div className = "lg:text-[64px] text-[40px] h-fit">12</div>
-                  <div>Hours</div>
-                </div>
-                <div className='text-white flex flex-col'>
-                  <div className = "lg:text-[64px] text-[40px] h-fit">34</div>
-                  <div>Minutes</div>
-                </div>
-                <div className='text-white flex flex-col'>
-                  <div className = "lg:text-[64px] text-[40px] h-fit">55</div>
-                  <div>Seconds</div>
                 </div>
               </div>
             </div>
+
+            <div className="flex items-center justify-around grow text-center">
+              <div className='text-white flex flex-col'>
+                <div className="lg:text-[64px] text-[40px] h-fit">1</div>
+                <div>Days</div>
+              </div>
+              <div className='text-white flex flex-col'>
+                <div className="lg:text-[64px] text-[40px] h-fit">12</div>
+                <div>Hours</div>
+              </div>
+              <div className='text-white flex flex-col'>
+                <div className="lg:text-[64px] text-[40px] h-fit">34</div>
+                <div>Minutes</div>
+              </div>
+              <div className='text-white flex flex-col'>
+                <div className="lg:text-[64px] text-[40px] h-fit">55</div>
+                <div>Seconds</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className='py-24 screenFrame px-[20px] bg-[url(/images/personal_bio_bg.png)] bg-cover bg-center'>
+          <div className='flex lg:flex-row flex-col items-center justify-between gap-5'>
+            <div className='basis-1/2'>
+              <h1 className='text-4xl mb-8 uppercase font-bold bg-gradient-to-r from-white via-[#FF9500] to-[#FF9500] to-90% bg-clip-text text-transparent'>
+                About Me
+              </h1>
+              <div className='text-white lg:w-[600px] space-y-5'>
+                <div>
+                  I (Duv Mac) was born in Long Beach (LBC) and moved to Compton (CPT) as a teenager, where I started collaborating with my best friend, rapper Pookie Loc, aka Fra Du Roc. I also worked with G-Celly, who appeared on Nationwide Rip Ridaz II, and went to high school with Warren G, Snoop Dogg, and Domino.
+                </div>
+
+                <div>
+                  Da Curb Cyde auditioned for Tamika at Ruthless Records and later got signed by DJ Unique at King Pin Records/EMI. Before that, I performed as DJ Moo but changed my name to Duv Mac when I shifted my focus to being an MC. After our contract with King Pin ended, Da Curb Cyde split, forming Young Curb Cyde under Chilly Chill Ent.
+                </div>
+
+                <div>
+                  Now, I've turned a new leaf, writing, producing, and building something bigger. I represent The Temple of Hip Hop West and am launching my own chapter, Zulu Nation West, for those who once doubted my vision.
+                </div>
+              </div>
+            </div>
+            <div className='basis-1/2 flex justify-center'>
+              <div className='size-[315px] rounded-t-full rounded-br-full rounded-bl-0 p-8 backdrop-blur-xs bg-gray-300/5'>
+                <div className='size-full relative'>
+                  <Image src="/images/owner_image.png" fill objectFit='cover' alt="owner_image" />
+                </div>
+              </div>
+            </div>
+
           </div>
         </section>
       </main>
