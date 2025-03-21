@@ -381,7 +381,7 @@ export default function Home() {
                 </div>
 
                 <div>
-                  Now, I've turned a new leaf, writing, producing, and building something bigger. I represent The Temple of Hip Hop West and am launching my own chapter, Zulu Nation West, for those who once doubted my vision.
+                  Now, I&apos;ve turned a new leaf, writing, producing, and building something bigger. I represent The Temple of Hip Hop West and am launching my own chapter, Zulu Nation West, for those who once doubted my vision.
                 </div>
               </div>
             </div>
