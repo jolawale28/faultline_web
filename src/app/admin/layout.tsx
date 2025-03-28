@@ -6,7 +6,6 @@ import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Sidebar from './components/layout/SideBar'
-import PageLoader from './components/PageLoader'
 import { usePathname } from "next/navigation";
 
 export default function AdminRootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -50,7 +49,6 @@ export default function AdminRootLayout({ children }: Readonly<{ children: React
             {children}
           </main>
         </section>
-        <PageLoader />
       </body>
     </html>
   )
