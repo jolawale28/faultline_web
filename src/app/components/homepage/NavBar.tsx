@@ -1,13 +1,71 @@
 'use client'
-
 import { Menu, ShoppingCart, User, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import React, {useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/app/firebase/firebaseConfig";
 
 export default function NavBar () {
   const [showMenu, setShowMenu] = useState(false)
+  const [admin, setAdmin] = useState<User[]>([]);
+  const [songLists, setSongLists] = useState<Music[]>([]);
+  const [beats, setBeats] = useState<Music[]>([]);
+  const [upcomings, setUpComings] = useState<Music[]>([]);
+
+  interface Music {
+    id: string;
+    musicStatus?: string;
+    musicType?: string;
+
+  }
+
+  interface User {
+    id: string;
+  }
+
+  const fetchUsers = async (
+      setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
+      setSongLists: React.Dispatch<React.SetStateAction<Music[]>>,
+      setBeats: React.Dispatch<React.SetStateAction<Music[]>>,
+      setUpComings: React.Dispatch<React.SetStateAction<Music[]>>
+  ) => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "music"));
+      const querySnapshotUser = await getDocs(collection(db, "music_user"));
+
+      // Extracting music list
+      const allList: Music[] = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // Extracting user details
+      const userDetails: User[] = querySnapshotUser.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // Updating state
+      setAdmin(userDetails);
+      setSongLists(allList);
+
+      // Filtering data
+      const coming = allList.filter((item) => item.musicStatus === "upcoming");
+      const beats = allList.filter((item) => item.musicType === "beat");
+
+      setBeats(beats);
+      setUpComings(coming);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers(setAdmin, setSongLists, setBeats, setUpComings);
+  }, [fetchUsers]);
+
   return (
     <>
       <nav className='flex justify-between items-center'>
