@@ -43,6 +43,20 @@ body {
   font-family: "Jolly Lodger" !important;
 }
 
+/* ----------------- Scrollbar ------------------- */
+
+/* Hide scrollbar for Webkit browsers (Chrome, Safari, Edge) */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.scrollbar-hidden {
+  scrollbar-width: none;
+}
+
+/* ----------------- Scrollbar ------------------- */
+
 
 /* --------------- Screen ------------------ */
 
