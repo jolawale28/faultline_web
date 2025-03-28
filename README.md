@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Faultline Web
+
+Faultline Web is a music distribution and streaming application designed to provide artists and listeners with a seamless platform for sharing and enjoying music. Built with Next.js and Tailwind CSS, it offers a modern and responsive user interface.
+
+## Features
+
+- **Music Streaming:** Stream music directly from the platform with high-quality audio playback.
+- **Artist Profiles:** Artists can create and manage their profiles, showcasing their music and engaging with fans.
+- **Playlists:** Users can create, share, and explore playlists curated by others.
+- **Search Functionality:** Easily search for songs, albums, and artists to discover new music.
+- **Responsive Design:** Optimized for various devices, ensuring a consistent experience across desktops, tablets, and smartphones.
+
+## Live Demo
+
+Experience the live application at [faultline-web.vercel.app](https://faultline-web.vercel.app).
 
 ## Getting Started
 
-First, run the development server:
+To set up the project locally, follow these steps:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/jolawale28/faultline_web.git
+```
+
+### 2. Navigate to the Project Directory
+
+```bash
+cd faultline_web
+```
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+Alternatively, you can use Yarn:
+
+```bash
+yarn install
+```
+
+### 4. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or with Yarn:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 5. Open in Browser
 
-## Learn More
+Visit [http://localhost:3000](http://localhost:3000) to view the application. The page will auto-update as you edit the source files.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The project's structure is organized as follows:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **`public/`**: Contains static assets such as images and fonts.
+- **`src/app/`**: Includes the main application components and pages.
+- **`styles/`**: Holds global styles and Tailwind CSS configurations.
+- **`components/`**: Reusable React components used throughout the application.
 
-## Deploy on Vercel
+## Technologies Used
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Next.js:** A React framework for server-rendered applications.
+- **Tailwind CSS:** A utility-first CSS framework for rapid UI development.
+- **TypeScript:** A typed superset of JavaScript that compiles to plain JavaScript.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contributing
+
+Contributions are welcome! To contribute:
+
+### 1. Fork the Repository
+
+Click the "Fork" button at the top right of the [repository page](https://github.com/jolawale28/faultline_web).
+
+### 2. Create a New Branch
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+### 3. Make Your Changes
+
+Implement your feature or fix the identified issue.
+
+### 4. Commit Your Changes
+
+```bash
+git commit -m "Add feature: your feature name"
+```
+
+### 5. Push to Your Fork
+
+```bash
+git push origin feature/your-feature-name
+```
+
+### 6. Submit a Pull Request
+
+Navigate to the original repository and click on "New Pull Request" to submit your changes for review.
+
+## License
+
+This project is licensed under the MIT License. For more details, refer to the [LICENSE](LICENSE) file.
+
+## Acknowledgements
+
+Special thanks to @Heebu for their invaluable support and resources.
+
+---
