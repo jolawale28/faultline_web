@@ -24,7 +24,7 @@ interface Music {
 interface MusicPlayerProps {
     musicList: Music[];
     currentTrackId?: string;
-    currentTrackIndex?: number;
+    currentTrackIndex: number;
     onTrackChange?: (music: Music, index: number) => void;
 }
 
@@ -44,6 +44,8 @@ const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
         const [isPlaying, setIsPlaying] = useState(false);
         const [isMuted, setIsMuted] = useState(false);
         const [currentMusicIndex, setCurrentMusicIndex] = useState(0);
+
+        console.log('heyyy', (musicList[currentTrackIndex]))
 
         // Initialize current track index
         useEffect(() => {
@@ -139,7 +141,10 @@ const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
                     <button
                         type='button'
                         title={isPlaying ? 'Pause' : 'Play'}
-                        onClick={() => (isPlaying ? audioRef.current?.pause() : audioRef.current?.play())}
+                        onClick={() => {
+                            console.log(audioRef.current);
+                            // isPlaying ? audioRef.current?.pause() : audioRef.current?.play();
+                        }}
                     >
                         {isPlaying ? (
                             <Pause color='white' size={20} />
@@ -168,7 +173,8 @@ const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
                     )}
                 </button>
 
-                <audio ref={audioRef} style={{ display: 'none' }} />
+                <audio src = {``} ref={audioRef} className="hidden" />
+                
             </div>
         );
     }

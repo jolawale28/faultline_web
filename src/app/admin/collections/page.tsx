@@ -30,8 +30,6 @@ export default function Collections() {
         post_date: Timestamp;
     }
 
-
-
     const fetchUsers = async (
         setSongLists: React.Dispatch<React.SetStateAction<Music[]>>,
         setBeats: React.Dispatch<React.SetStateAction<Music[]>>,
@@ -52,6 +50,7 @@ export default function Collections() {
 
             setBeats(beats);
             setMusic(music); // Updated this line
+            setMusicPlay(music)
         } catch (error) {
             console.error("Error fetching users:", error);
         }
@@ -75,7 +74,7 @@ export default function Collections() {
     useEffect(() => {
         fetchUsers(setSongLists, setBeats).then(() => {
         });
-    }, [fetchUsers]);
+    }, []);
 
 
 
