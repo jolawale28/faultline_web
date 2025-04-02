@@ -1,3 +1,4 @@
+import signOutUser from "@/app/firebase/signout_func";
 import { FileMusic, House, Music4, Newspaper, PanelLeftClose, User } from "lucide-react";
 import Link from "next/link";
 import { JSX } from "react";
@@ -17,22 +18,16 @@ const NavItemLinks = ({ pathname }: { pathname: string }) => {
             icon: <Music4 size={20} color={pathname === ('/admin/collections') ? 'white' : '#807E7E'} />
         },
         {
-            label: 'New Releases',
-            href: '/admin/new_releases',
-            icon: <FileMusic size={20} color={pathname === ('/admin/new_releases') ? 'white' : '#807E7E'} />
-        },
-        {
             label: 'Newsletter',
             href: '/admin/newsletter',
             icon: <Newspaper size={20} color={pathname === ('/admin/newsletter') ? 'white' : '#807E7E'} />
         },
-        {
-            label: 'About',
-            href: '/admin/about',
-            icon: <User size={20} color={pathname === ('/admin/about') ? 'white' : '#807E7E'} />
-        }
 
     ]
+
+    const handleSignOut = () => {
+        signOutUser().then(()=>{});
+    };
 
     return (
         <>
@@ -63,10 +58,10 @@ const NavItemLinks = ({ pathname }: { pathname: string }) => {
                 ))
             }
             <li className="relative hover:bg-[#FF9500]/10">
-                <Link href="/admin/about" className="flex items-center py-3 ps-5">
+                <button onClick={handleSignOut} className="flex items-center py-3 ps-5">
                     <div className="basis-[30px] grow-0 shrink-0"><PanelLeftClose size={20} color="#807E7E" /></div>
                     <div className="text-[#807E7E] grow">Sign out</div>
-                </Link>
+                </button>
             </li>
         </>
     )

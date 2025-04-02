@@ -1,9 +1,84 @@
 'use client'
 
-import { CircleDollarSign, Pencil, Play, PlayCircleIcon, SkipBack, SkipForward, Trash2, Volume2 } from "lucide-react";
+import { CircleDollarSign, PlayCircleIcon} from "lucide-react";
 import Image from "next/image";
+import React, {useEffect, useRef, useState} from "react";
+import {collection, getDocs, Timestamp} from "firebase/firestore";
+import {db} from "@/app/firebase/firebaseConfig";
+import MusicPlayer, {MusicPlayerHandle} from "@/app/components/ui/music_bar";
+
 
 export default function Collections() {
+
+
+    const [songLists, setSongLists] = useState<Music[]>([]);
+    const [beats, setBeats] = useState<Music[]>([]);
+    const [music, setMusic] = useState<Music[]>([]);
+    const [musicPlay, setMusicPlay] = useState<Music[]>([]);
+
+    const [pickedTab, setPickedTab] = useState('songs');
+
+    interface Music {
+        id: string;
+        musicStatus?: string;
+        musicType?: string;
+        cover_image: string;
+        feats: string;
+        price: number;
+        music_name: string;
+        link: string;
+        post_date: Timestamp;
+    }
+
+
+
+    const fetchUsers = async (
+        setSongLists: React.Dispatch<React.SetStateAction<Music[]>>,
+        setBeats: React.Dispatch<React.SetStateAction<Music[]>>,
+    ) => {
+        try {
+            const querySnapshot = await getDocs(collection(db, "music"));
+
+            const allList: Music[] = querySnapshot.docs.map((doc) => ({
+                ...(doc.data() as Music),
+                id: doc.id,
+            }));
+
+            setSongLists(allList);
+
+            // Filtering data
+            const beats = allList.filter((item) => item.musicType === "beat");
+            const music = allList.filter((item) => item.musicType === "music");
+
+            setBeats(beats);
+            setMusic(music); // Updated this line
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    };
+
+    const playerRef = useRef<MusicPlayerHandle>(null);
+
+    const handleTrackChange = (music: typeof musicPlay[0], index: number) => {
+        console.log(`Now playing: ${music.music_name} at index ${index}`);
+    };
+
+    const playMusic = () => {
+        playerRef.current?.play();
+    };
+
+    // const pauseMusic = () => {
+    //     playerRef.current?.pause();
+    // };
+
+
+    useEffect(() => {
+        fetchUsers(setSongLists, setBeats).then(() => {
+        });
+    }, [fetchUsers]);
+
+
+
     return (
         <>
             <div className="h-full grow shrink flex flex-col gap-5">
@@ -18,108 +93,188 @@ export default function Collections() {
                         </button>
                     </div>
                 </div>
-                <div className='backdrop-blur-lg bg-gray-300/10 min-h-[300px] rounded-4xl p-10 space-y-8 max-w-full'>
-                    <div className='flex xl:flex-row flex-col gap-5 justify-between'>
-                        <div className='flex gap-x-2 items-center h-fit overflow-x-scroll scrollbar-hidden'>
+                <div className='backdrop-blur-lg bg-gray-300/10 min-h-[300px] rounded-4xl p-10 space-y-8'>
+                    <div className='flex lg:flex-row flex-col lg:gap-0 gap-5 justify-between'>
+                        <div className='flex gap-x-8 items-center h-fit'>
                             <button
-                                title='My Songs'
+                                title='All Music'
                                 type='button'
-                                className='border-2 border-[#FF9500] px-5 py-2 text-[#FF9500] font-bold rounded-full text-nowrap'
+                                className={`border - 2 px-5 py-2 ${pickedTab === 'songs'? 'border-[#FF9500] text-[#FF9500]': 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                                onClick={()=>{
+                                    setPickedTab('songs')
+                                    setMusicPlay(songLists);
+                                }}
                             >
                                 My Songs
                             </button>
                             <button
                                 title='My Beats'
                                 type='button'
-                                className='border-2 border-white px-5 py-2 text-white hover:border-[#FF9500] hover:text-[#FF9500] rounded-full  text-nowrap'
+                                className={`border - 2 px-5 py-2 ${pickedTab === 'beats'? 'border-[#FF9500] text-[#FF9500]': 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'  } font-bold rounded-full`}
+                                onClick={()=>{
+                                    setPickedTab('beats')
+                                    setMusicPlay(beats);
+                                }}
                             >
                                 My Beats
                             </button>
                             <button
-                                title='My Albums'
+                                title='My Songs'
                                 type='button'
-                                className='border-2 border-white px-5 py-2 text-white rounded-full  text-nowrap'
+                                className={`border - 2 px-5 py-2 ${pickedTab === 'albums'? 'border-[#FF9500] text-[#FF9500]': 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                                onClick={()=>{
+                                    setPickedTab('albums')
+                                    setMusicPlay(music);
+                                }}
                             >
                                 My Albums
                             </button>
                         </div>
-                        <div className='bg-black/40 lg:basis-1/2 basis-auto h-fit py-2 px-8 border-[1.5px] border-white rounded-full flex items-center justify-between'>
-                            <div className='flex gap-x-5 items-center'>
-                                <button type='button' title='Previous'>
-                                    <SkipBack color='white' size={20} />
-                                </button>
-                                <button type='button' title='Play'>
-                                    <Play color='white' size={20} />
-                                </button>
-                                <div role='button' title='Next'>
-                                    <SkipForward color='white' size={20} />
-                                </div>
-                            </div>
-                            <div className='font-light text-base text-white'>
-                                Now Playing ...
-                            </div>
-                            <button type='button' title='Volume'>
-                                <Volume2 color='white' />
-                            </button>
-                        </div>
+                        <MusicPlayer
+                            ref={playerRef}
+                            musicList={musicPlay}
+                            currentTrackIndex={0}
+                            onTrackChange={handleTrackChange}
+                        />
+
                     </div>
 
-                    <div className='overflow-x-scroll scrollbar-hidden'>
-                        <table className='w- divide-gray-200'>
+                    <div className='overflow-x-scroll scrollbar-hide'>
+                        <table className='w-full divide-gray-200'>
                             <tbody className='bg-transparent text-white'>
-                                {[1, 2, 3, 4].map((ele, idx) => (
-                                    <tr key={`list_of_songs_${idx}`}>
-                                        <td className='py-2 pr-4 whitespace-nowrap font-extrabold lg:w-[1%]'>
-                                            {ele}.
-                                        </td>
-                                        <td className='py-2 flex gap-x-3 items-center lg:min-w-[50%]'>
-                                            <div className='relative size-[48px] shrink-0 rounded-xl overflow-hidden'>
-                                                <Image
-                                                    src='/images/music_image.png'
-                                                    fill
-                                                    objectFit='cover'
-                                                    alt='music_image'
-                                                />
-                                            </div>
-                                            <div className='flex gap-x-3 text-nowrap'>
-                                                <span className='font-bold'>Far East</span>{' '}
-                                                <span className='font-light opacity-40'>
-                                                    ft. Jay Karmen
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='py-2 whitespace-nowrap text-center lg:w-[20%] px-10'>
-                                            2024
-                                        </td>
-                                        <td className='py-2 whitespace-nowrap font-normal text-gray-400 text-center lg:w-[20%] px-10'>
-                                            3.25
-                                        </td>
-                                        <td className='py-2 whitespace-nowrap text-center lg:w-[20%] px-10'>
-                                            <div className='flex justify-center'>
-                                                <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
-                                                    <CircleDollarSign size={18} color='black' />
-                                                    <span className='text-black text-sm font-black mt-1'>
-                                                        $8
-                                                    </span>
+                            {
+                                pickedTab === 'songs'?
+                                    songLists.map((ele, idx) => (
+                                        <tr key={`list_of_songs_${idx}`}>
+                                            <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
+                                                {ele.music_name}.
+                                            </td>
+                                            <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
+                                                <div className='relative size-[48px] rounded-xl overflow-hidden'>
+                                                    <Image
+                                                        src={ele?.cover_image?? '/images/defult_music_image.png'}
+                                                        fill
+                                                        objectFit='cover'
+                                                        alt='music_image'
+                                                    />
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className='py-2 whitespace-nowrap '>
-                                            <div className='flex gap-x-2 justify-end text-xs items-center'>
-                                                <PlayCircleIcon />
-                                                <button title=" " className="border border-white text-white px-2 py-1 rounded-lg hover:bg-white hover:text-black">
-                                                    <Pencil size={16} />
+                                                <div className='flex gap-x-3'>
+                                                    <span className='font-bold'>{ele.music_name}</span>{' '}
+                                                    <span className='font-light opacity-40'>
+                            {ele.feats}
+                          </span>
+                                                </div>
+                                            </td>
+
+                                            <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
+                                                <div className='flex justify-center'>
+                                                    <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
+                                                        <CircleDollarSign size={18} color='black' />
+                                                        <span className='text-black text-sm font-black mt-1'>
+                              {ele.price}
+                            </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className='py-2 whitespace-nowrap '>
+                                                <div className='flex justify-end'>
+                                                    <PlayCircleIcon />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )): null
+                            }
+
+                            {
+                                pickedTab === 'beats'?
+                                    beats.map((ele, idx) => (
+                                        <tr key={`list_of_songs_${idx}`}>
+                                            <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
+                                                {ele.music_name}.
+                                            </td>
+                                            <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
+                                                <div className='relative size-[48px] rounded-xl overflow-hidden'>
+                                                    <Image
+                                                        src={ele?.cover_image?? '/images/defult_music_image.png'}
+                                                        fill
+                                                        objectFit='cover'
+                                                        alt='music_image'
+                                                    />
+                                                </div>
+                                                <div className='flex gap-x-3'>
+                                                    <span className='font-bold'>{ele.music_name}</span>{' '}
+                                                    <span className='font-light opacity-40'>
+                            {ele.feats}
+                          </span>
+                                                </div>
+                                            </td>
+
+                                            <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
+                                                <div className='flex justify-center'>
+                                                    <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
+                                                        <CircleDollarSign size={18} color='black' />
+                                                        <span className='text-black text-sm font-black mt-1'>
+                              {ele.price}
+                            </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className='py-2 whitespace-nowrap '>
+                                                <div className='flex justify-end'>
+                                                    <PlayCircleIcon />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )): null
+                            }
+
+                            {
+                                pickedTab === 'albums'?
+                                    music.map((ele, idx) => (
+                                        <tr key={`list_of_songs_${idx}`}>
+                                            <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
+                                                {ele.music_name}.
+                                            </td>
+                                            <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
+                                                <div className='relative size-[48px] rounded-xl overflow-hidden'>
+                                                    <Image
+                                                        src={ele?.cover_image?? '/images/defult_music_image.png'}
+                                                        fill
+                                                        objectFit='cover'
+                                                        alt='music_image'
+                                                    />
+                                                </div>
+                                                <div className='flex gap-x-3'>
+                                                    <span className='font-bold'>{ele.music_name}</span>{' '}
+                                                    <span className='font-light opacity-40'>
+                            {ele.feats}
+                          </span>
+                                                </div>
+                                            </td>
+
+                                            <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
+                                                <div className='flex justify-center'>
+                                                    <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
+                                                        <CircleDollarSign size={18} color='black' />
+                                                        <span className='text-black text-sm font-black mt-1'>
+                              {ele.price}
+                            </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className='py-2 whitespace-nowrap '>
+                                                <button onClick={playMusic} className='flex justify-end'>
+                                                    <PlayCircleIcon />
                                                 </button>
-                                                <button className="border border-red-500 text-red-500 px-2 py-1 rounded-lg hover:bg-red-500 hover:border-red-500 hover:text-white"><Trash2 size={16} /></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                            </td>
+                                        </tr>
+                                    )): null
+                            }
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
+
+                </div>            </div>
         </>
     )
 }

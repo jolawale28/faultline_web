@@ -2,70 +2,11 @@
 import { Menu, ShoppingCart, User, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, {useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/app/firebase/firebaseConfig";
 
 export default function NavBar () {
   const [showMenu, setShowMenu] = useState(false)
-  const [admin, setAdmin] = useState<User[]>([]);
-  const [songLists, setSongLists] = useState<Music[]>([]);
-  const [beats, setBeats] = useState<Music[]>([]);
-  const [upcomings, setUpComings] = useState<Music[]>([]);
-
-  interface Music {
-    id: string;
-    musicStatus?: string;
-    musicType?: string;
-
-  }
-
-  interface User {
-    id: string;
-  }
-
-  const fetchUsers = async (
-      setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
-      setSongLists: React.Dispatch<React.SetStateAction<Music[]>>,
-      setBeats: React.Dispatch<React.SetStateAction<Music[]>>,
-      setUpComings: React.Dispatch<React.SetStateAction<Music[]>>
-  ) => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "music"));
-      const querySnapshotUser = await getDocs(collection(db, "music_user"));
-
-      // Extracting music list
-      const allList: Music[] = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      // Extracting user details
-      const userDetails: User[] = querySnapshotUser.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      // Updating state
-      setAdmin(userDetails);
-      setSongLists(allList);
-
-      // Filtering data
-      const coming = allList.filter((item) => item.musicStatus === "upcoming");
-      const beats = allList.filter((item) => item.musicType === "beat");
-
-      setBeats(beats);
-      setUpComings(coming);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers(setAdmin, setSongLists, setBeats, setUpComings);
-  }, [fetchUsers]);
-
   return (
     <>
       <nav className='flex justify-between items-center'>
@@ -79,7 +20,7 @@ export default function NavBar () {
             />
           </div>
           <Link
-            href='/newsletter'
+            href='#email'
             className='uppercase bg-[#FF9500] rounded-full px-8 py-3 opacity-80 text-white font-extrabold text-sm'
           >
             NewsLetter
@@ -123,17 +64,10 @@ export default function NavBar () {
                         Home
                       </Link>
                     </li>
+
                     <li>
                       <Link
-                        href='/'
-                        className='text-xl font-bold hover:text-[#FF9500] transition-colors'
-                      >
-                        Collections
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href='/'
+                        href='#release'
                         className='text-xl font-bold hover:text-[#FF9500] transition-colors'
                       >
                         Upcoming Releases
@@ -147,16 +81,7 @@ export default function NavBar () {
                         Free
                       </Link>
                     </li>
-                    <li className='flex justify-center mt-10'>
-                      <div className='flex gap-x-5 border-[1.5px] rounded-full border-black px-5 py-2.5 w-fit'>
-                        <Link href='/'>
-                          <ShoppingCart color='black' size={24} />
-                        </Link>
-                        <Link href='/'>
-                          <User color='black' size={24} />
-                        </Link>
-                      </div>
-                    </li>
+                    
                   </ul>
                 </div>
               </motion.div>

@@ -3,8 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NavItemLinks from "./NavItemLinks";
+import {useState} from "react";
 
-export default function Sidebar() {
+export default function Sidebar({onEdit: boolean}) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const pathname = usePathname()
 
@@ -21,7 +23,11 @@ export default function Sidebar() {
                         <div>
                             <Link className="bg-[#FF9500] px-4 py-2 rounded-full flex gap-x-2" href="/">
                                 <PencilLine size={20} />
-                                <span>Edit</span>
+                                <div
+                                onClick={()=>{
+                                    setIsModalOpen()
+                                }}
+                                >Edit</div>
                             </Link>
                         </div>
                     </div>

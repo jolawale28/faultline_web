@@ -1,22 +1,27 @@
 "use client";
 
 import MobileSideBar from './components/layout/MobileSideBar'
-import SearchBar from './components/SearchBar'
 import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Sidebar from './components/layout/SideBar'
 import { usePathname } from "next/navigation";
+import {useState} from "react";
 
 export default function AdminRootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 
   const pathname = usePathname();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleChanges = (isEdit: boolean) => {
+    setIsModalOpen(isEdit);
+  };
 
   return (
     <html lang='en'>
       <body className={`antialiased`} >
         <section className="bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center flex gap-5 p-5 h-[calc(100vh)]">
-          <Sidebar />
+          <Sidebar onEdit={handleChanges} />
           <main className="grow shrink h-full flex flex-col gap-y-10 w-full overflow-y-scroll scrollbar-hidden">
             <div className="flex flex-row gap-5 justify-between md:items-center basis-auto">
 
@@ -40,7 +45,7 @@ export default function AdminRootLayout({ children }: Readonly<{ children: React
                   }
 
                 </div>
-                <SearchBar />
+
               </div>
 
               <MobileSideBar />
