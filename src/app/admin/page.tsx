@@ -1,41 +1,40 @@
 'use client';
 
-import React, {useEffect, useState} from "react";
-import {collection, getDocs, Timestamp} from "firebase/firestore";
-import {db} from "@/app/firebase/firebaseConfig";
+import React, { useEffect, useState } from "react";
+import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { db } from "@/app/firebase/firebaseConfig";
 
+interface Music {
+    id: string;
+    musicStatus?: string;
+    musicType?: string;
+    cover_image: string;
+    feats: string;
+    price: number;
+    music_name: string;
+    link: string;
+    post_date: Timestamp;
+}
+
+interface User {
+    id: string;
+    about_me: string;
+    downloads: [];
+    facebook_link: string;
+    first_name: string;
+    last_name: string;
+    instagram_link: string;
+    profile_image: string;
+    tiktok_link: string;
+    youtube_link: string;
+    twitter_link: string;
+    social_visits: [];
+}
 
 export default function Home() {
 
     const [admin, setAdmin] = useState<User[]>([]);
     const [songLists, setSongLists] = useState<Music[]>([]);
-
-    interface Music {
-        id: string;
-        musicStatus?: string;
-        musicType?: string;
-        cover_image: string;
-        feats: string;
-        price: number;
-        music_name: string;
-        link: string;
-        post_date: Timestamp;
-    }
-
-    interface User {
-        id: string;
-        about_me: string;
-        downloads: [];
-        facebook_link: string;
-        first_name: string;
-        last_name: string;
-        instagram_link: string;
-        profile_image: string;
-        tiktok_link: string;
-        youtube_link: string;
-        twitter_link: string;
-        social_visits: [];
-    }
 
     const fetchUsers = async (
         setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
