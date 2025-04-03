@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, {useRef, useState} from 'react';
 import { Timestamp, addDoc, collection } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import {db, storage} from "@/app/firebase/firebaseConfig";
+import {Id, toast} from "react-toastify";
 
 
 interface MusicUploadModalProps {
@@ -17,10 +18,16 @@ const MusicUploadModal: React.FC<MusicUploadModalProps> = ({ onClose }) => {
     const [musicFile, setMusicFile] = useState<File | null>(null);
     const [coverImage, setCoverImage] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
+    const toastNotif = useRef<Id | null>(null)
+
+
+
 
     const handleUpload = async () => {
         if (!musicName || !feats || !musicFile || !coverImage) return alert("Please fill all required fields");
         setLoading(true);
+        toast.dismiss()
+
 
         try {
             const musicRef = ref(storage, `music/${musicFile.name}`);
@@ -42,11 +49,17 @@ const MusicUploadModal: React.FC<MusicUploadModalProps> = ({ onClose }) => {
                 cover_image: coverUrl,
                 post_date: Timestamp.now(),
             });
-            alert('Music uploaded successfully!');
+            if (toastNotif.current) {
+                toast.dismiss(toastNotif.current)
+            }
+            toastNotif.current = toast.success('Operation success! Music uploaded.', {autoClose: 5_000})
+
             onClose();
-        } catch (error) {
-            alert('Failed to upload music');
-            console.error(error);
+        } catch (error: unknown) {
+            if (toastNotif.current) {
+                toast.dismiss(toastNotif.current)
+            }
+            toastNotif.current = toast.error(`error: ${error}`, {autoClose: 50_000})
         }
 
         setLoading(false);
