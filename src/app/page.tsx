@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/app/firebase/firebaseConfig";
 import downloadMusicFromUrl from "@/app/firebase/download_music";
+import Countdown from "@/app/components/ui/release_date";
 
 export default function Home() {
 
@@ -548,24 +549,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex items-center justify-around grow text-center">
-              <div className='text-white flex flex-col'>
-                <div className="lg:text-[64px] text-[40px] h-fit">1</div>
-                <div>Days</div>
-              </div>
-              <div className='text-white flex flex-col'>
-                <div className="lg:text-[64px] text-[40px] h-fit">12</div>
-                <div>Hours</div>
-              </div>
-              <div className='text-white flex flex-col'>
-                <div className="lg:text-[64px] text-[40px] h-fit">34</div>
-                <div>Minutes</div>
-              </div>
-              <div className='text-white flex flex-col'>
-                <div className="lg:text-[64px] text-[40px] h-fit">55</div>
-                <div>Seconds</div>
-              </div>
-            </div>
+            <Countdown targetDate={(new Date(upcomings?.[0]?.post_date.seconds * 1000)) ?? Date.now()} />
           </div>
         </section>
 

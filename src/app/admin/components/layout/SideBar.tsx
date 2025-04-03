@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NavItemLinks from "./NavItemLinks";
 import {useState} from "react";
+import EditProfileModal from "@/app/admin/components/edit_modal";
 
 export default function Sidebar() {
 
-    const [, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const pathname = usePathname()
 
     return (
@@ -20,17 +21,17 @@ export default function Sidebar() {
                             <Image src="/images/owner_image.png" fill objectFit="cover" alt="admin_image" />
                         </div>
                         <h2 className="font-extrabold text-base text-white">Duv Mac</h2>
-                        <div>
-                            <Link className="bg-[#FF9500] px-4 py-2 rounded-full flex gap-x-2" href="/">
+                        <button onClick={()=>{
+                            setIsModalOpen(true)
+                        }}>
+                            <div className="bg-[#FF9500] px-4 py-2 rounded-full flex gap-x-2" >
                                 <PencilLine size={20} />
                                 <div
-                                onClick={()=>{
-                                    setIsModalOpen(true)
-                                }}
                                 >Edit</div>
-                            </Link>
-                        </div>
+                            </div>
+                        </button>
                     </div>
+                    <EditProfileModal onClose={() => {setIsModalOpen(false)}} userId={'x7Qd21eDuN1YiRgcpZ2f'} isOpen={isModalOpen} />
                     <nav className="bg-black rounded-xl py-5">
                         <ul>
                             <NavItemLinks pathname={pathname} />
