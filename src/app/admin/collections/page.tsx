@@ -1,19 +1,23 @@
 'use client'
 
-import { CircleDollarSign, Loader, PlayCircleIcon } from "lucide-react";
+import {CircleDollarSign, DeleteIcon, Loader, PlayCircleIcon} from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useRef, useState, useTransition } from "react";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/app/firebase/firebaseConfig";
 import MusicPlayer, { MusicPlayerHandle } from "@/app/components/ui/music_bar";
-
+import MusicUploadModal from "@/app/admin/components/muiscUploadModalPops";
+import {deleteMusicFromDatabase} from "@/app/firebase/delete_music";
+import {Id, toast} from "react-toastify";
 export default function Collections() {
 
     const [songLists, setSongLists] = useState<Music[]>([]);
     const [beats, setBeats] = useState<Music[]>([]);
     const [music, setMusic] = useState<Music[]>([]);
     const [musicPlay, setMusicPlay] = useState<Music[]>([]);
-
+    const [isUploadModal, setIsUploadModal] = useState(false);
+    const [, setLoading] = useState(false);
+    const toastNotif = useRef<Id | null>(null)
     const [pickedTab, setPickedTab] = useState('songs');
 
     interface Music {
@@ -38,9 +42,7 @@ export default function Collections() {
         playerRef.current?.play();
     };
 
-    // const pauseMusic = () => {
-    //     playerRef.current?.pause();
-    // };
+    const [, startDeleteFunc] = useTransition()
 
     const [fetchingMusic, startMusicFetch] = useTransition()
     useEffect(() => {
@@ -71,6 +73,32 @@ export default function Collections() {
         })()
     }, []);
 
+
+    const handleDelete = (id : string) => {
+        setLoading(true)
+        toast.dismiss()
+        startDeleteFunc(async () => {
+            await deleteMusicFromDatabase(id)
+                .then(() => {
+                    if (toastNotif.current) {
+                        toast.dismiss(toastNotif.current)
+                    }
+                    toastNotif.current = toast.success('Operation success! Music Deleted', {autoClose: 5_000})
+
+                })
+                .catch((error) => {
+                    console.log(error)
+                    if (toastNotif.current) {
+                        toast.dismiss(toastNotif.current)
+                    }
+                    toastNotif.current = toast.error(error.message, {autoClose: 50_000})
+                })
+                .finally(() => {
+                    setLoading(false)
+                })
+        })
+    };
+
     return (
         <>
             <div className="h-full grow shrink flex flex-col gap-5">
@@ -79,7 +107,9 @@ export default function Collections() {
                         My Collections
                     </h1>
                     <div>
-                        <button type="button" className="flex gap-x-2 bg-[#FF9500] px-4 py-2 rounded-full font-extrabold hover:bg-[#FF9500]/80">
+                        <button onClick={() => {
+                            setIsUploadModal(true)
+                        }} type="button" className="flex gap-x-2 bg-[#FF9500] px-4 py-2 rounded-full font-extrabold hover:bg-[#FF9500]/80">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 17a3 3 0 1 0 6 0a3 3 0 0 0-6 0m6 0V4h10v8M9 8h10m-3 11h6m-3-3v6" /></svg>
                             New Upload
                         </button>
@@ -181,6 +211,14 @@ export default function Collections() {
                                                             <PlayCircleIcon />
                                                         </div>
                                                     </td>
+
+                                                    <td className='py-2 whitespace-nowrap '>
+                                                        <div onClick={() => {
+                                                            handleDelete(ele.id)
+                                                        }} className='flex justify-end'>
+                                                            <DeleteIcon />
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             ))
                                         }
@@ -276,6 +314,9 @@ export default function Collections() {
                         )
                     }
                 </div>
+
+                { isUploadModal? <MusicUploadModal onClose={() => {setIsUploadModal(false)}}/>: null}
+
             </div>
         </>
     )
