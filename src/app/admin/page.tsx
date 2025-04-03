@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/app/firebase/firebaseConfig";
 
@@ -36,42 +36,40 @@ export default function Home() {
     const [admin, setAdmin] = useState<User[]>([]);
     const [songLists, setSongLists] = useState<Music[]>([]);
 
-    const fetchUsers = async (
-        setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
-        setSongLists: React.Dispatch<React.SetStateAction<Music[]>>,
-    ) => {
-        try {
-            const querySnapshot = await getDocs(collection(db, "music"));
-            const querySnapshotUser = await getDocs(collection(db, "music_user"));
+    const fetchUsers = useCallback(
+        async (
+            setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
+            setSongLists: React.Dispatch<React.SetStateAction<Music[]>>
+        ) => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "music"));
+                const querySnapshotUser = await getDocs(collection(db, "music_user"));
 
-            // Extracting music list
-            const allList: Music[] = querySnapshot.docs.map((doc) => ({
-                ...(doc.data() as Music),
-                id: doc.id,
-            }));
+                // Extracting music list
+                const allList: Music[] = querySnapshot.docs.map((doc) => ({
+                    ...(doc.data() as Music),
+                    id: doc.id,
+                }));
 
-            // Extracting user details
-            const userDetails: User[] = querySnapshotUser.docs.map((doc) => ({
-                ...(doc.data() as User),
-                id: doc.id,
-            }));
+                // Extracting user details
+                const userDetails: User[] = querySnapshotUser.docs.map((doc) => ({
+                    ...(doc.data() as User),
+                    id: doc.id,
+                }));
 
-            // Updating state
-            setAdmin(userDetails);
-            setSongLists(allList);
-
-        } catch (error) {
-            console.error("Error fetching users:", error);
-        }
-    };
-
+                // Updating state
+                setAdmin(userDetails);
+                setSongLists(allList);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            }
+        },
+        [] // Dependencies array, ensure it remains stable
+    );
 
     useEffect(() => {
         fetchUsers(setAdmin, setSongLists).then();
     }, [fetchUsers]);
-
-
-
 
     return (
         <>
@@ -80,7 +78,6 @@ export default function Home() {
                     <div className="backdrop-blur-lg bg-gray-50/5 rounded-xl py-10 flex flex-col items-center text-white gap-y-5">
                         <div>Total Musics</div>
                         <div className="text-5xl">{songLists.length ?? 0}</div>
-
                     </div>
 
                     <div className="backdrop-blur-lg bg-gray-50/5 rounded-xl py-10 flex flex-col items-center text-white gap-y-5">
@@ -93,8 +90,6 @@ export default function Home() {
                         <div className="text-5xl">{admin?.[0]?.social_visits?.length ?? 0}</div>
                     </div>
                 </div>
-
-
             </div>
         </>
     )

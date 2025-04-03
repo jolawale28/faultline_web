@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {doc, updateDoc } from 'firebase/firestore';
 import {ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {db, storage} from "@/app/firebase/firebaseConfig";
+import Image from 'next/image';
 
 interface EditProfileModalProps {
     userId: string;
@@ -119,7 +120,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ userId, isOpen, onC
                     className="mb-4"
                 />
                 {loading && <p>Uploading...</p>}
-                {profileImage && <img src={profileImage} alt="Profile" className="w-20 h-20 rounded-full mb-2" />}
+                {profileImage && <Image src={profileImage} alt="Profile" width = {80} height = {80} className="rounded-full mb-2" />}
 
                 <div className="flex justify-end gap-2">
                     <button onClick={onClose} className="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>

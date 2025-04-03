@@ -1,7 +1,6 @@
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import {db} from "@/app/firebase/firebaseConfig";
 
-
 export const saveEmailToFirestore = async (emailData: string) => {
     try {
         // Validate email format

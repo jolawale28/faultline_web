@@ -1,9 +1,13 @@
-import signOutUser from "@/app/firebase/signout_func";
-import { FileMusic, House, Music4, Newspaper, PanelLeftClose, User } from "lucide-react";
+import { getAuth, signOut } from "firebase/auth";
+import { House, Loader, Music4, Newspaper, PanelLeftClose } from "lucide-react";
 import Link from "next/link";
-import { JSX } from "react";
+import { JSX, useRef, useState, useTransition } from "react";
+import { Id, toast } from "react-toastify";
 
 const NavItemLinks = ({ pathname }: { pathname: string }) => {
+
+    const auth = getAuth();
+    const toastNotif = useRef<Id | null>(null)
 
     type NavItem = {
         label: string;
@@ -21,8 +25,34 @@ const NavItemLinks = ({ pathname }: { pathname: string }) => {
 
     ]
 
+    const [, startSignOut] = useTransition()
+    const [loadingSignOut, setLoadingSignOut] = useState(false)
     const handleSignOut = () => {
-        signOutUser().then(()=>{});
+        
+        setLoadingSignOut(true)
+        toast.dismiss()
+        startSignOut(async () => {
+            signOut(auth).then(() => {
+                // Sign-out successful.
+                console.log('signed out')
+                if (toastNotif.current) {
+                    toast.dismiss(toastNotif.current)
+                }
+                toastNotif.current = toast.success('You have been signed out.', { autoClose: 5000 })
+                
+            }).catch((error) => {
+                // An error happened.
+                console.log(error)
+                if (toastNotif.current) {
+                    toast.dismiss(toastNotif.current)
+                }
+                toastNotif.current = toast.error('Operation aborted! Something went wrong.', { autoClose: 10000 })
+            })
+            .finally(() => {
+                setLoadingSignOut(false)
+            })
+        })
+
     };
 
     return (
@@ -54,9 +84,12 @@ const NavItemLinks = ({ pathname }: { pathname: string }) => {
                 ))
             }
             <li className="relative hover:bg-[#FF9500]/10">
-                <button onClick={handleSignOut} className="flex items-center py-3 ps-5">
+                <button onClick={() => handleSignOut()} className="flex items-center py-3 px-5 w-full cursor-pointer">
                     <div className="basis-[30px] grow-0 shrink-0"><PanelLeftClose size={20} color="#807E7E" /></div>
-                    <div className="text-[#807E7E] grow">Sign out</div>
+                    <div className="text-[#807E7E] flex justify-between items-center grow">
+                        <div>Sign out</div>
+                        {loadingSignOut && <div><Loader size = {18} className="animate-spin text-gray-500" /></div>}
+                    </div>
                 </button>
             </li>
         </>

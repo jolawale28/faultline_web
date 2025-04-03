@@ -1,13 +1,13 @@
 'use client'
-import { useState } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import signInUser from "@/app/firebase/signin_func";
 import { CardContent } from "@/app/components/ui/card content";
 import { Card } from "@/app/components/ui/card";
-import { Button } from '../components/ui/button';
+import { getAuth, signInWithEmailAndPassword, User } from "firebase/auth";
+import { Id, toast } from 'react-toastify';
+import Image from 'next/image';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -20,60 +20,78 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 
 const SignInScreen = () => {
+
+    const [, setUser] = useState<User | null>(null)
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
-    const handleSignIn = async () => {
-        setLoading(true);
-        const auth = getAuth();
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in 
-                const user = userCredential.user;
-                router.push('/admin')
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                setError(`${errorCode}: ${errorMessage}`);
-            }).finally(() => {
-                setLoading(false);
-            })
+    const toastNotif = useRef<Id | null>(null)
+
+    const [, startUserSignIn] = useTransition()
+    const handleSignIn = () => {
+        setLoading(true)
+        toast.dismiss()
+        startUserSignIn(async () => {
+            const auth = getAuth();
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    setUser(user)
+                    
+                    if (toastNotif.current) {
+                        toast.dismiss(toastNotif.current)
+                    }
+                    toastNotif.current = toast.success('Operation success! You are now logged in.', {autoClose: 5_000})
+                    router.push('/admin')
+                })
+                .catch((error) => {
+                    console.log(error)
+                    if (toastNotif.current) {
+                        toast.dismiss(toastNotif.current)
+                    }
+                    toastNotif.current = toast.error(error.message, {autoClose: 50_000})
+                })
+                .finally(() => {
+                    setLoading(false)
+                })
+        })
     };
 
     return (
-        <div className=" bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-700 via-indigo-600 to-blue-500">
+        <div className=" bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center flex items-center justify-center min-h-screen">
+            
             <Card className="w-full max-w-md p-6 bg-white/10 backdrop-blur-md rounded-2xl">
                 <CardContent>
-                    <h2 className="text-white text-3xl font-bold mb-4">Sign In</h2>
-                    {error && <p className="text-red-400 mb-2">{error}</p>}
+                    <div className='flex item-center justify-center w-full mb-10'>
+                        <Image src="/app_logo_big.png" width={50} height={0} alt="logo" />
+                    </div>
+                    <h2 className="text-white text-xl font-bold mb-10 text-center">Admin Authentication</h2>
                     <input
                         type="email"
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full mb-3 p-3 bg-white/20 text-white rounded-xl focus:outline-none"
+                        className="w-full mb-3 p-3 bg-white/20 text-white rounded-lg focus:outline-none"
                     />
                     <input
                         type="password"
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full mb-4 p-3 bg-white/20 text-white rounded-xl focus:outline-none"
+                        className="w-full mb-3 p-3 bg-white/20 text-white rounded-lg focus:outline-none"
                     />
-                    <Button
-                        onClick={handleSignIn}
-                        className="w-full py-3 text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl flex items-center justify-center gap-2"
-                        disabled={loading}
-                    >
-                        {loading ? <Loader2 className="animate-spin" /> : 'Sign In'}
-                    </Button>
+
+                    <button onClick={handleSignIn} disabled = {loading} className='w-full bg-[#FF9500] text-white px-4 py-3 font-extrabold rounded-lg flex items-center justify-center gap-2 cursor-pointer'>
+                        {loading ? <Loader2 className="animate-spin" color = "white" /> : 'Sign In'}
+                    </button>
+                    
                 </CardContent>
             </Card>
         </div>
