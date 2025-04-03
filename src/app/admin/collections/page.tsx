@@ -1,15 +1,14 @@
 'use client'
 
-import { CircleDollarSign, PlayCircleIcon} from "lucide-react";
+import { CircleDollarSign, PlayCircleIcon } from "lucide-react";
 import Image from "next/image";
-import React, {useEffect, useRef, useState} from "react";
-import {collection, getDocs, Timestamp} from "firebase/firestore";
-import {db} from "@/app/firebase/firebaseConfig";
-import MusicPlayer, {MusicPlayerHandle} from "@/app/components/ui/music_bar";
+import React, { useEffect, useRef, useState } from "react";
+import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { db } from "@/app/firebase/firebaseConfig";
+import MusicPlayer, { MusicPlayerHandle } from "@/app/components/ui/music_bar";
 
 
 export default function Collections() {
-
 
     const [songLists, setSongLists] = useState<Music[]>([]);
     const [beats, setBeats] = useState<Music[]>([]);
@@ -70,13 +69,10 @@ export default function Collections() {
     //     playerRef.current?.pause();
     // };
 
-
     useEffect(() => {
         fetchUsers(setSongLists, setBeats).then(() => {
         });
     }, []);
-
-
 
     return (
         <>
@@ -98,10 +94,9 @@ export default function Collections() {
                             <button
                                 title='All Music'
                                 type='button'
-                                className={`border - 2 px-5 py-2 ${pickedTab === 'songs'? 'border-[#FF9500] text-[#FF9500]': 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
-                                onClick={()=>{
+                                className={`border - 2 px-5 py-2 ${pickedTab === 'songs' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                                onClick={() => {
                                     setPickedTab('songs')
-                                    setMusicPlay(songLists);
                                 }}
                             >
                                 My Songs
@@ -109,10 +104,9 @@ export default function Collections() {
                             <button
                                 title='My Beats'
                                 type='button'
-                                className={`border - 2 px-5 py-2 ${pickedTab === 'beats'? 'border-[#FF9500] text-[#FF9500]': 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'  } font-bold rounded-full`}
-                                onClick={()=>{
+                                className={`border - 2 px-5 py-2 ${pickedTab === 'beats' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                                onClick={() => {
                                     setPickedTab('beats')
-                                    setMusicPlay(beats);
                                 }}
                             >
                                 My Beats
@@ -120,10 +114,9 @@ export default function Collections() {
                             <button
                                 title='My Songs'
                                 type='button'
-                                className={`border - 2 px-5 py-2 ${pickedTab === 'albums'? 'border-[#FF9500] text-[#FF9500]': 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
-                                onClick={()=>{
+                                className={`border - 2 px-5 py-2 ${pickedTab === 'albums' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                                onClick={() => {
                                     setPickedTab('albums')
-                                    setMusicPlay(music);
                                 }}
                             >
                                 My Albums
@@ -141,8 +134,8 @@ export default function Collections() {
                     <div className='overflow-x-scroll scrollbar-hide'>
                         <table className='w-full divide-gray-200'>
                             <tbody className='bg-transparent text-white'>
-                            {
-                                pickedTab === 'songs'?
+                                {
+                                    pickedTab === 'songs' &&
                                     songLists.map((ele, idx) => (
                                         <tr key={`list_of_songs_${idx}`}>
                                             <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
@@ -151,7 +144,7 @@ export default function Collections() {
                                             <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
                                                 <div className='relative size-[48px] rounded-xl overflow-hidden'>
                                                     <Image
-                                                        src={ele?.cover_image?? '/images/defult_music_image.png'}
+                                                        src={ele?.cover_image ?? '/images/defult_music_image.png'}
                                                         fill
                                                         objectFit='cover'
                                                         alt='music_image'
@@ -160,8 +153,8 @@ export default function Collections() {
                                                 <div className='flex gap-x-3'>
                                                     <span className='font-bold'>{ele.music_name}</span>{' '}
                                                     <span className='font-light opacity-40'>
-                            {ele.feats}
-                          </span>
+                                                        {ele.feats}
+                                                    </span>
                                                 </div>
                                             </td>
 
@@ -170,8 +163,8 @@ export default function Collections() {
                                                     <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
                                                         <CircleDollarSign size={18} color='black' />
                                                         <span className='text-black text-sm font-black mt-1'>
-                              {ele.price}
-                            </span>
+                                                            {ele.price}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -181,11 +174,11 @@ export default function Collections() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    )): null
-                            }
+                                    ))
+                                }
 
-                            {
-                                pickedTab === 'beats'?
+                                {
+                                    pickedTab === 'beats' &&
                                     beats.map((ele, idx) => (
                                         <tr key={`list_of_songs_${idx}`}>
                                             <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
@@ -194,7 +187,7 @@ export default function Collections() {
                                             <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
                                                 <div className='relative size-[48px] rounded-xl overflow-hidden'>
                                                     <Image
-                                                        src={ele?.cover_image?? '/images/defult_music_image.png'}
+                                                        src={ele?.cover_image ?? '/images/defult_music_image.png'}
                                                         fill
                                                         objectFit='cover'
                                                         alt='music_image'
@@ -203,8 +196,8 @@ export default function Collections() {
                                                 <div className='flex gap-x-3'>
                                                     <span className='font-bold'>{ele.music_name}</span>{' '}
                                                     <span className='font-light opacity-40'>
-                            {ele.feats}
-                          </span>
+                                                        {ele.feats}
+                                                    </span>
                                                 </div>
                                             </td>
 
@@ -213,8 +206,8 @@ export default function Collections() {
                                                     <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
                                                         <CircleDollarSign size={18} color='black' />
                                                         <span className='text-black text-sm font-black mt-1'>
-                              {ele.price}
-                            </span>
+                                                            {ele.price}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -224,11 +217,11 @@ export default function Collections() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    )): null
-                            }
+                                    ))
+                                }
 
-                            {
-                                pickedTab === 'albums'?
+                                {
+                                    pickedTab === 'albums' &&
                                     music.map((ele, idx) => (
                                         <tr key={`list_of_songs_${idx}`}>
                                             <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
@@ -237,7 +230,7 @@ export default function Collections() {
                                             <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
                                                 <div className='relative size-[48px] rounded-xl overflow-hidden'>
                                                     <Image
-                                                        src={ele?.cover_image?? '/images/defult_music_image.png'}
+                                                        src={ele?.cover_image ?? '/images/defult_music_image.png'}
                                                         fill
                                                         objectFit='cover'
                                                         alt='music_image'
@@ -246,8 +239,8 @@ export default function Collections() {
                                                 <div className='flex gap-x-3'>
                                                     <span className='font-bold'>{ele.music_name}</span>{' '}
                                                     <span className='font-light opacity-40'>
-                            {ele.feats}
-                          </span>
+                                                        {ele.feats}
+                                                    </span>
                                                 </div>
                                             </td>
 
@@ -256,8 +249,8 @@ export default function Collections() {
                                                     <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
                                                         <CircleDollarSign size={18} color='black' />
                                                         <span className='text-black text-sm font-black mt-1'>
-                              {ele.price}
-                            </span>
+                                                            {ele.price}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -267,13 +260,13 @@ export default function Collections() {
                                                 </button>
                                             </td>
                                         </tr>
-                                    )): null
-                            }
+                                    ))
+                                }
                             </tbody>
                         </table>
                     </div>
-
-                </div>            </div>
+                </div>
+            </div>
         </>
     )
 }

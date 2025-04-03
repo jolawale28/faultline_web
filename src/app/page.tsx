@@ -12,108 +12,106 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './Icons'
 import NavBar from './components/homepage/NavBar'
-import React, {useEffect, useState} from "react";
-import {collection, getDocs, Timestamp} from "firebase/firestore";
-import {db} from "@/app/firebase/firebaseConfig";
-import {saveEmailToFirestore} from "@/app/firebase/save_email";
+import React, { useEffect, useState } from "react";
+import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { db } from "@/app/firebase/firebaseConfig";
 import downloadMusicFromUrl from "@/app/firebase/download_music";
 
 export default function Home() {
 
-    const [admin, setAdmin] = useState<User[]>([]);
-    const [songLists, setSongLists] = useState<Music[]>([]);
-    const [beats, setBeats] = useState<Music[]>([]);
-    const [music, setMusic] = useState<Music[]>([]);
-    const [upcomings, setUpComings] = useState<Music[]>([]);
-    const [email, setEmail] = useState<string>('');
+  const [admin, setAdmin] = useState<User[]>([]);
+  const [songLists, setSongLists] = useState<Music[]>([]);
+  const [beats, setBeats] = useState<Music[]>([]);
+  const [music, setMusic] = useState<Music[]>([]);
+  const [upcomings, setUpComings] = useState<Music[]>([]);
 
-    let randomNum = 0;
-    const [pickedTab, setPickedTab] = useState('songs');
+  let randomNum = 0;
+  const [pickedTab, setPickedTab] = useState('songs');
 
-    interface Music {
-        id: string;
-        musicStatus?: string;
-        musicType?: string;
-        cover_image: string;
-        feats: string;
-        price: number;
-        music_name: string;
-        link: string;
-        post_date: Timestamp;
+  interface Music {
+    id: string;
+    musicStatus?: string;
+    musicType?: string;
+    cover_image: string;
+    feats: string;
+    price: number;
+    music_name: string;
+    link: string;
+    post_date: Timestamp;
+  }
+
+
+
+  interface User {
+    id: string;
+    about_me: string;
+    downloads: never;
+    facebook_link: string;
+    first_name: string;
+    last_name: string;
+    instagram_link: string;
+    profile_image: string;
+    tiktok_link: string;
+    youtube_link: string;
+    twitter_link: string;
+  }
+
+  const fetchUsers = async (
+    setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
+    setSongLists: React.Dispatch<React.SetStateAction<Music[]>>,
+    setBeats: React.Dispatch<React.SetStateAction<Music[]>>,
+    setUpComings: React.Dispatch<React.SetStateAction<Music[]>>
+  ) => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "music"));
+      const querySnapshotUser = await getDocs(collection(db, "music_user"));
+
+      // Extracting music list
+      const allList: Music[] = querySnapshot.docs.map((doc) => ({
+        ...(doc.data() as Music),
+        id: doc.id,
+      }));
+
+      // Extracting user details
+      const userDetails: User[] = querySnapshotUser.docs.map((doc) => ({
+        ...(doc.data() as User),
+        id: doc.id,
+      }));
+
+      // Updating state
+      setAdmin(userDetails);
+      setSongLists(allList);
+
+      // Filtering data
+      const coming = allList.filter((item) => item.musicStatus === "upcoming");
+      const beats = allList.filter((item) => item.musicType === "beat");
+      const music = allList.filter((item) => item.musicType === "music");
+
+      setBeats(beats);
+      setUpComings(coming);
+      setMusic(music); // Updated this line
+    } catch (error) {
+      console.error("Error fetching users:", error);
     }
+  };
 
 
-    
-    interface User {
-        id: string;
-        about_me: string;
-        downloads: never;
-        facebook_link: string;
-        first_name: string;
-        last_name: string;
-        instagram_link: string;
-        profile_image: string;
-        tiktok_link: string;
-        youtube_link: string;
-        twitter_link: string;
-    }
-
-    const fetchUsers = async (
-        setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
-        setSongLists: React.Dispatch<React.SetStateAction<Music[]>>,
-        setBeats: React.Dispatch<React.SetStateAction<Music[]>>,
-        setUpComings: React.Dispatch<React.SetStateAction<Music[]>>
-    ) => {
-        try {
-            const querySnapshot = await getDocs(collection(db, "music"));
-            const querySnapshotUser = await getDocs(collection(db, "music_user"));
-
-            // Extracting music list
-            const allList: Music[] = querySnapshot.docs.map((doc) => ({
-                ...(doc.data() as Music),
-                id: doc.id,
-            }));
-
-            // Extracting user details
-            const userDetails: User[] = querySnapshotUser.docs.map((doc) => ({
-                ...(doc.data() as User),
-                id: doc.id,
-            }));
-
-            // Updating state
-            setAdmin(userDetails);
-            setSongLists(allList);
-
-            // Filtering data
-            const coming = allList.filter((item) => item.musicStatus === "upcoming");
-            const beats = allList.filter((item) => item.musicType === "beat");
-            const music = allList.filter((item) => item.musicType === "music");
-
-            setBeats(beats);
-            setUpComings(coming);
-            setMusic(music); // Updated this line
-        } catch (error) {
-            console.error("Error fetching users:", error);
-        }
-    };
+  useEffect(() => {
+    fetchUsers(setAdmin, setSongLists, setBeats, setUpComings).then(() => {
+      randomNum = Math.floor(Math.random() * songLists.length)
+    });
+  }, [fetchUsers]);
 
 
-    useEffect(() => {
-        fetchUsers(setAdmin, setSongLists, setBeats, setUpComings).then(() => {
-randomNum = Math.floor(Math.random() * songLists.length)
-        });
-    }, [fetchUsers]);
+  // const handleSubmitEmail = async () => {
+  //     try {
+  //         await saveEmailToFirestore(email);
+  //         // Show success message to user
+  //     } catch {
+  //     }
+  // };
 
-
-    // const handleSubmitEmail = async () => {
-    //     try {
-    //         await saveEmailToFirestore(email);
-    //         // Show success message to user
-    //     } catch {
-    //     }
-    // };
-
-    return (
+  return (
     <>
       <header className="bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center">
         <div className='space-y-16 bg-gradient-to-r from-black/80 via-transparent to-transparent h-full px-[20px] screenFrame py-8'>
@@ -173,13 +171,13 @@ randomNum = Math.floor(Math.random() * songLists.length)
                   />
                 </div>
                 <div className='flex flex-col justify-between grow text-sm'>
-                  <div className='font-bold text-base'>{songLists?.[0]?.music_name?? ''}</div>
-                  <div>{songLists?.[0]?.feats?? ''}</div>
-                  <div>{songLists?.[0]?.musicType?? ''}</div>
+                  <div className='font-bold text-base'>{songLists?.[0]?.music_name ?? ''}</div>
+                  <div>{songLists?.[0]?.feats ?? ''}</div>
+                  <div>{songLists?.[0]?.musicType ?? ''}</div>
                   <div className='flex justify-between items-center'>
                     <div className='flex items-center gap-x-2'>
                       <Clock size={20} />
-                        {(new Date(songLists?.[0]?.post_date.seconds * 1000)).toLocaleDateString()?? ''}
+                      {(new Date(songLists?.[0]?.post_date.seconds * 1000)).toLocaleDateString() ?? ''}
                     </div>
                     <Link
                       href=''
@@ -196,30 +194,30 @@ randomNum = Math.floor(Math.random() * songLists.length)
               <div className='flex gap-x-5'>
                 <div className='size-32 relative overflow-hidden rounded-lg shrink-0'>
                   <Image
-                    src={beats?.[0]?.cover_image?? '/images/defult_music_image.png'}
+                    src={beats?.[0]?.cover_image ?? '/images/defult_music_image.png'}
                     fill
                     objectFit='cover'
                     alt='new release'
                   />
                 </div>
-                  <div className='flex flex-col justify-between grow text-sm'>
-                      <div className='font-bold text-base'>{beats?.[0]?.music_name ?? ''}</div>
-                      <div>{beats?.[0]?.feats ?? ''}</div>
-                      <div>{beats?.[0]?.musicType ?? ''}</div>
-                      <div className='flex justify-between items-center'>
-                          <div className='flex items-center gap-x-2'>
-                              <CircleDollarSign size={20} />
-                              {beats?.[0]?.price ?? ''}
-                          </div>
-                          <Link
-                              href={beats?.[0]?.link ?? '#'} // Add a valid or fallback link
-                              className='py-2 px-4 rounded-full border border-white text-white hover:bg-white hover:text-black transition-colors font-bold'
-                              aria-label='Buy this track'
-                          >
-                              Buy Now
-                          </Link>
-                      </div>
+                <div className='flex flex-col justify-between grow text-sm'>
+                  <div className='font-bold text-base'>{beats?.[0]?.music_name ?? ''}</div>
+                  <div>{beats?.[0]?.feats ?? ''}</div>
+                  <div>{beats?.[0]?.musicType ?? ''}</div>
+                  <div className='flex justify-between items-center'>
+                    <div className='flex items-center gap-x-2'>
+                      <CircleDollarSign size={20} />
+                      {beats?.[0]?.price ?? ''}
+                    </div>
+                    <Link
+                      href={beats?.[0]?.link ?? '#'} // Add a valid or fallback link
+                      className='py-2 px-4 rounded-full border border-white text-white hover:bg-white hover:text-black transition-colors font-bold'
+                      aria-label='Buy this track'
+                    >
+                      Buy Now
+                    </Link>
                   </div>
+                </div>
 
               </div>
             </div>
@@ -228,7 +226,7 @@ randomNum = Math.floor(Math.random() * songLists.length)
               <div className='flex gap-x-5'>
                 <div className='size-32 relative overflow-hidden rounded-lg shrink-0'>
                   <Image
-                      src={music?.[randomNum]?.cover_image?? '/images/defult_music_image.png'}
+                    src={music?.[randomNum]?.cover_image ?? '/images/defult_music_image.png'}
                     fill
                     objectFit='cover'
                     alt='new release'
@@ -236,21 +234,21 @@ randomNum = Math.floor(Math.random() * songLists.length)
                 </div>
                 <div className='flex flex-col justify-between grow text-sm'>
                   <div className='font-bold text-base'>
-                      {music?.[randomNum]?.feats ?? ''}
+                    {music?.[randomNum]?.feats ?? ''}
                   </div>
                   <div>{music?.[randomNum]?.music_name}</div>
                   <div>{music?.[randomNum]?.musicType}</div>
                   <div className='flex justify-between items-center'>
                     <div className='flex items-center gap-x-2'>
                       <CircleDollarSign size={20} />
-                      {music?.[randomNum]?.price?? '0'}
+                      {music?.[randomNum]?.price ?? '0'}
                     </div>
                     <div
                       onClick={() => {
-                          downloadMusicFromUrl(
-                              music?.[randomNum]?.link,
-                              music?.[randomNum]?.music_name
-                          );
+                        downloadMusicFromUrl(
+                          music?.[randomNum]?.link,
+                          music?.[randomNum]?.music_name
+                        );
                       }}
                       className='py-2 px-4 rounded-full border border-white text-white hover:bg-white hover:text-black transition-colors font-bold'
                     >
@@ -285,9 +283,9 @@ randomNum = Math.floor(Math.random() * songLists.length)
                 <button
                   title='All Music'
                   type='button'
-                  className={`border - 2 px-5 py-2 ${pickedTab === 'songs'? 'border-[#FF9500] text-[#FF9500]': 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
-                  onClick={()=>{
-                      setPickedTab('songs')
+                  className={`border - 2 px-5 py-2 ${pickedTab === 'songs' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                  onClick={() => {
+                    setPickedTab('songs')
                   }}
                 >
                   My Songs
@@ -295,9 +293,9 @@ randomNum = Math.floor(Math.random() * songLists.length)
                 <button
                   title='My Beats'
                   type='button'
-                  className={`border - 2 px-5 py-2 ${pickedTab === 'beats'? 'border-[#FF9500] text-[#FF9500]': 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'  } font-bold rounded-full`}
-                  onClick={()=>{
-                      setPickedTab('beats')
+                  className={`border - 2 px-5 py-2 ${pickedTab === 'beats' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                  onClick={() => {
+                    setPickedTab('beats')
                   }}
                 >
                   My Beats
@@ -305,9 +303,9 @@ randomNum = Math.floor(Math.random() * songLists.length)
                 <button
                   title='My Songs'
                   type='button'
-                  className={`border - 2 px-5 py-2 ${pickedTab === 'albums'? 'border-[#FF9500] text-[#FF9500]': 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
-                  onClick={()=>{
-                      setPickedTab('albums')
+                  className={`border - 2 px-5 py-2 ${pickedTab === 'albums' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                  onClick={() => {
+                    setPickedTab('albums')
                   }}
                 >
                   My Albums
@@ -338,132 +336,132 @@ randomNum = Math.floor(Math.random() * songLists.length)
               <table className='w-full divide-gray-200'>
                 <tbody className='bg-transparent text-white'>
                   {
-                      pickedTab === 'songs'?
-                          songLists.map((ele, idx) => (
-                    <tr key={`list_of_songs_${idx}`}>
-                      <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
-                        {ele.music_name}.
-                      </td>
-                      <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
-                        <div className='relative size-[48px] rounded-xl overflow-hidden'>
-                          <Image
-                              src={ele?.cover_image?? '/images/defult_music_image.png'}
-                            fill
-                            objectFit='cover'
-                            alt='music_image'
-                          />
-                        </div>
-                        <div className='flex gap-x-3'>
-                          <span className='font-bold'>{ele.music_name}</span>{' '}
-                          <span className='font-light opacity-40'>
-                            {ele.feats}
-                          </span>
-                        </div>
-                      </td>
+                    pickedTab === 'songs' ?
+                      songLists.map((ele, idx) => (
+                        <tr key={`list_of_songs_${idx}`}>
+                          <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
+                            {ele.music_name}.
+                          </td>
+                          <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
+                            <div className='relative size-[48px] rounded-xl overflow-hidden'>
+                              <Image
+                                src={ele?.cover_image ?? '/images/defult_music_image.png'}
+                                fill
+                                objectFit='cover'
+                                alt='music_image'
+                              />
+                            </div>
+                            <div className='flex gap-x-3'>
+                              <span className='font-bold'>{ele.music_name}</span>{' '}
+                              <span className='font-light opacity-40'>
+                                {ele.feats}
+                              </span>
+                            </div>
+                          </td>
 
-                      <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
-                        <div className='flex justify-center'>
-                          <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
-                            <CircleDollarSign size={18} color='black' />
-                            <span className='text-black text-sm font-black mt-1'>
-                              {ele.price}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className='py-2 whitespace-nowrap '>
-                        <div className='flex justify-end'>
-                          <PlayCircleIcon />
-                        </div>
-                      </td>
-                    </tr>
-                  )): null
+                          <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
+                            <div className='flex justify-center'>
+                              <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
+                                <CircleDollarSign size={18} color='black' />
+                                <span className='text-black text-sm font-black mt-1'>
+                                  {ele.price}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className='py-2 whitespace-nowrap '>
+                            <div className='flex justify-end'>
+                              <PlayCircleIcon />
+                            </div>
+                          </td>
+                        </tr>
+                      )) : null
                   }
 
                   {
-                    pickedTab === 'beats'?
-                        beats.map((ele, idx) => (
-                            <tr key={`list_of_songs_${idx}`}>
-                              <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
-                                {ele.music_name}.
-                              </td>
-                              <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
-                                <div className='relative size-[48px] rounded-xl overflow-hidden'>
-                                  <Image
-                                      src={ele?.cover_image?? '/images/defult_music_image.png'}
-                                      fill
-                                      objectFit='cover'
-                                      alt='music_image'
-                                  />
-                                </div>
-                                <div className='flex gap-x-3'>
-                                  <span className='font-bold'>{ele.music_name}</span>{' '}
-                                  <span className='font-light opacity-40'>
-                            {ele.feats}
-                          </span>
-                                </div>
-                              </td>
+                    pickedTab === 'beats' ?
+                      beats.map((ele, idx) => (
+                        <tr key={`list_of_songs_${idx}`}>
+                          <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
+                            {ele.music_name}.
+                          </td>
+                          <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
+                            <div className='relative size-[48px] rounded-xl overflow-hidden'>
+                              <Image
+                                src={ele?.cover_image ?? '/images/defult_music_image.png'}
+                                fill
+                                objectFit='cover'
+                                alt='music_image'
+                              />
+                            </div>
+                            <div className='flex gap-x-3'>
+                              <span className='font-bold'>{ele.music_name}</span>{' '}
+                              <span className='font-light opacity-40'>
+                                {ele.feats}
+                              </span>
+                            </div>
+                          </td>
 
-                              <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
-                                <div className='flex justify-center'>
-                                  <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
-                                    <CircleDollarSign size={18} color='black' />
-                                    <span className='text-black text-sm font-black mt-1'>
-                              {ele.price}
-                            </span>
-                                  </div>
-                                </div>
-                              </td>
-                              <td className='py-2 whitespace-nowrap '>
-                                <div className='flex justify-end'>
-                                  <PlayCircleIcon />
-                                </div>
-                              </td>
-                            </tr>
-                        )): null
+                          <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
+                            <div className='flex justify-center'>
+                              <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
+                                <CircleDollarSign size={18} color='black' />
+                                <span className='text-black text-sm font-black mt-1'>
+                                  {ele.price}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className='py-2 whitespace-nowrap '>
+                            <div className='flex justify-end'>
+                              <PlayCircleIcon />
+                            </div>
+                          </td>
+                        </tr>
+                      )) : null
                   }
 
                   {
-                    pickedTab === 'albums'?
-                        music.map((ele, idx) => (
-                            <tr key={`list_of_songs_${idx}`}>
-                              <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
-                                {ele.music_name}.
-                              </td>
-                              <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
-                                <div className='relative size-[48px] rounded-xl overflow-hidden'>
-                                  <Image
-                                      src={ele?.cover_image?? '/images/defult_music_image.png'}
-                                      fill
-                                      objectFit='cover'
-                                      alt='music_image'
-                                  />
-                                </div>
-                                <div className='flex gap-x-3'>
-                                  <span className='font-bold'>{ele.music_name}</span>{' '}
-                                  <span className='font-light opacity-40'>
-                            {ele.feats}
-                          </span>
-                                </div>
-                              </td>
+                    pickedTab === 'albums' ?
+                      music.map((ele, idx) => (
+                        <tr key={`list_of_songs_${idx}`}>
+                          <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
+                            {ele.music_name}.
+                          </td>
+                          <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
+                            <div className='relative size-[48px] rounded-xl overflow-hidden'>
+                              <Image
+                                src={ele?.cover_image ?? '/images/defult_music_image.png'}
+                                fill
+                                objectFit='cover'
+                                alt='music_image'
+                              />
+                            </div>
+                            <div className='flex gap-x-3'>
+                              <span className='font-bold'>{ele.music_name}</span>{' '}
+                              <span className='font-light opacity-40'>
+                                {ele.feats}
+                              </span>
+                            </div>
+                          </td>
 
-                              <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
-                                <div className='flex justify-center'>
-                                  <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
-                                    <CircleDollarSign size={18} color='black' />
-                                    <span className='text-black text-sm font-black mt-1'>
-                              {ele.price}
-                            </span>
-                                  </div>
-                                </div>
-                              </td>
-                              <td className='py-2 whitespace-nowrap '>
-                                <div className='flex justify-end'>
-                                  <PlayCircleIcon />
-                                </div>
-                              </td>
-                            </tr>
-                        )): null
+                          <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
+                            <div className='flex justify-center'>
+                              <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
+                                <CircleDollarSign size={18} color='black' />
+                                <span className='text-black text-sm font-black mt-1'>
+                                  {ele.price}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className='py-2 whitespace-nowrap '>
+                            <div className='flex justify-end'>
+                              <PlayCircleIcon />
+                            </div>
+                          </td>
+                        </tr>
+                      )) : null
                   }
                 </tbody>
               </table>
@@ -524,7 +522,7 @@ randomNum = Math.floor(Math.random() * songLists.length)
               <div className='flex gap-x-5'>
                 <div className='size-24 relative overflow-hidden rounded-lg shrink-0'>
                   <Image
-                      src={upcomings?.[0]?.cover_image ?? '/images/defult_music_image.png'}
+                    src={upcomings?.[0]?.cover_image ?? '/images/defult_music_image.png'}
                     fill
                     objectFit='cover'
                     alt='new release'
@@ -537,7 +535,7 @@ randomNum = Math.floor(Math.random() * songLists.length)
                   <div className='flex justify-between items-center'>
                     <div className='flex items-center gap-x-2'>
                       <Clock size={20} />
-                      {(new Date(upcomings?.[0]?.post_date.seconds * 1000)).toLocaleDateString()?? ''}
+                      {(new Date(upcomings?.[0]?.post_date.seconds * 1000)).toLocaleDateString() ?? ''}
                     </div>
                     <Link
                       href=''

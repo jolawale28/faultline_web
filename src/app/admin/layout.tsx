@@ -6,20 +6,22 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Sidebar from './components/layout/SideBar'
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { ReactNode } from "react";
+import ProtectedAuthComp from '../components/ProtectedAuthComp';
+import { User } from "firebase/auth";
 
-export default function AdminRootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+interface AdminRootLayoutProps {
+  children: ReactNode;
+  user: User; // Injected by HOC
+}
+
+function AdminRootLayout({ children, /*user*/ }: Readonly<AdminRootLayoutProps>) {
 
   const pathname = usePathname();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleChanges = (isEdit: boolean) => {
-    setIsModalOpen(isEdit);
-  };
 
   return (
     <section className="bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center flex gap-5 p-5 h-[calc(100vh)]">
-      <Sidebar onEdit={handleChanges} />
+      <Sidebar />
       <main className="grow shrink h-full flex flex-col gap-y-10 w-full overflow-y-scroll scrollbar-hidden">
         <div className="flex flex-row gap-5 justify-between md:items-center basis-auto">
 
@@ -54,3 +56,5 @@ export default function AdminRootLayout({ children }: Readonly<{ children: React
     </section>
   )
 }
+
+export default ProtectedAuthComp(AdminRootLayout);

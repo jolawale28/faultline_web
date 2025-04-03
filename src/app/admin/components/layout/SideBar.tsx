@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import NavItemLinks from "./NavItemLinks";
 import {useState} from "react";
 
-export default function Sidebar({onEdit: boolean}) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+export default function Sidebar() {
 
+    const [, setIsModalOpen] = useState(false);
     const pathname = usePathname()
 
     return (
@@ -25,7 +25,7 @@ export default function Sidebar({onEdit: boolean}) {
                                 <PencilLine size={20} />
                                 <div
                                 onClick={()=>{
-                                    setIsModalOpen()
+                                    setIsModalOpen(true)
                                 }}
                                 >Edit</div>
                             </Link>
