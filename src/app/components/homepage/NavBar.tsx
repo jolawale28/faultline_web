@@ -19,12 +19,12 @@ export default function NavBar () {
               alt='faultLine logo image'
             />
           </div>
-          <Link
-            href='#email'
-            className='uppercase bg-[#FF9500] rounded-full px-8 py-3 opacity-80 text-white font-extrabold text-sm'
-          >
-            NewsLetter
-          </Link>
+          {/*<Link*/}
+          {/*  href='#email'*/}
+          {/*  className='uppercase bg-[#FF9500] rounded-full px-8 py-3 opacity-80 text-white font-extrabold text-sm'*/}
+          {/*>*/}
+          {/*  NewsLetter*/}
+          {/*</Link>*/}
         </div>
 
         <div className=''>
@@ -73,14 +73,14 @@ export default function NavBar () {
                         Upcoming Releases
                       </Link>
                     </li>
-                    <li>
-                      <Link
-                        href='/'
-                        className='text-xl font-bold hover:text-[#FF9500] transition-colors'
-                      >
-                        Free
-                      </Link>
-                    </li>
+                    {/*<li>*/}
+                    {/*  <Link*/}
+                    {/*    href='/'*/}
+                    {/*    className='text-xl font-bold hover:text-[#FF9500] transition-colors'*/}
+                    {/*  >*/}
+                    {/*    Free*/}
+                    {/*  </Link>*/}
+                    {/*</li>*/}
                     
                   </ul>
                 </div>
@@ -100,7 +100,7 @@ export default function NavBar () {
 
             <li>
               <Link
-                href='/'
+                href='#collection'
                 className='font-bold text-nowrap text-base uppercase text-white hover:text-[#FF9500] transition-colors'
               >
                 Collection
@@ -109,32 +109,32 @@ export default function NavBar () {
 
             <li>
               <Link
-                href='/'
+                href='#release'
                 className='font-bold text-nowrap text-base uppercase text-white hover:text-[#FF9500] transition-colors'
               >
                 Upcoming Releases
               </Link>
             </li>
 
-            <li>
-              <Link
-                href='/'
-                className='font-bold text-nowrap text-base uppercase text-white hover:text-[#FF9500] transition-colors'
-              >
-                Free
-              </Link>
-            </li>
+            {/*<li>*/}
+            {/*  <Link*/}
+            {/*    href='/'*/}
+            {/*    className='font-bold text-nowrap text-base uppercase text-white hover:text-[#FF9500] transition-colors'*/}
+            {/*  >*/}
+            {/*    Free*/}
+            {/*  </Link>*/}
+            {/*</li>*/}
 
-            <li>
-              <div className='flex gap-x-5 border-[1.5px] rounded-full border-white px-5 py-2.5'>
-                <Link href='/'>
-                  <ShoppingCart color='white' size={24} />
-                </Link>
-                <Link href='/'>
-                  <User color='white' size={24} />
-                </Link>
-              </div>
-            </li>
+            {/*<li>*/}
+            {/*  <div className='flex gap-x-5 border-[1.5px] rounded-full border-white px-5 py-2.5'>*/}
+            {/*    <Link href='/'>*/}
+            {/*      <ShoppingCart color='white' size={24} />*/}
+            {/*    </Link>*/}
+            {/*    <Link href='/'>*/}
+            {/*      <User color='white' size={24} />*/}
+            {/*    </Link>*/}
+            {/*  </div>*/}
+            {/*</li>*/}
           </ul>
         </div>
       </nav>

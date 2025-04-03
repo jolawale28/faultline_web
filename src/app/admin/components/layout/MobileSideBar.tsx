@@ -4,14 +4,61 @@ import { Menu, PencilLine, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from "react";
+import React, {useEffect, useState} from "react";
 import NavItemLinks from "./NavItemLinks";
 import { usePathname } from "next/navigation";
+import {collection, getDocs} from "firebase/firestore";
+import {db} from "@/app/firebase/firebaseConfig";
+interface User {
+    id: string;
+    about_me: string;
+    downloads: never;
+    facebook_link: string;
+    first_name: string;
+    last_name: string;
+    instagram_link: string;
+    profile_image: string;
+    tiktok_link: string;
+    youtube_link: string;
+    twitter_link: string;
+}
 
 export default function MobileSideBar() {
 
     const pathname: string = usePathname()
     const [showSidebar, setShowSidebar] = useState<boolean>(false);
+    const [admin, setAdmin] = useState<User[]>([]);
+
+    const fetchUsers = async (
+        setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
+
+    ) => {
+        try {
+            const querySnapshotUser = await getDocs(collection(db, "music_user"));
+
+            // Extracting user details
+            const userDetails: User[] = querySnapshotUser.docs.map((doc) => ({
+                ...(doc.data() as User),
+                id: doc.id,
+            }));
+
+            // Updating state
+            setAdmin(userDetails);
+
+
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    };
+
+
+    useEffect(() => {
+        fetchUsers(setAdmin,).then(() => {
+
+        });
+    }, [fetchUsers]);
+
+
 
     return (
         <>
@@ -33,9 +80,9 @@ export default function MobileSideBar() {
                                     </div>
                                     <div className="flex flex-col gap-y-5 items-center">
                                         <div className="relative size-30 rounded-full overflow-hidden">
-                                            <Image src="/images/owner_image.png" fill objectFit="cover" alt="admin_image" />
+                                            <Image src={admin?.[0]?.profile_image ?? "/images/owner_image.png"} fill objectFit="cover" alt="admin_image" />
                                         </div>
-                                        <h2 className="font-extrabold text-base text-white">Duv Mac</h2>
+                                        <h2 className="font-extrabold text-base text-white"> {`${admin?.[0]?.first_name ?? `Duv `} ${admin?.[0]?.last_name  ?? `Mac`}`}</h2>
                                         <div>
                                             <Link className="bg-[#FF9500] px-4 py-2 rounded-full flex gap-x-2" href="/">
                                                 <PencilLine size={20} />

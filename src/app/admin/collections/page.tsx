@@ -6,6 +6,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {collection, getDocs, Timestamp} from "firebase/firestore";
 import {db} from "@/app/firebase/firebaseConfig";
 import MusicPlayer, {MusicPlayerHandle} from "@/app/components/ui/music_bar";
+import MusicUploadModal from "@/app/admin/components/muiscUploadModalPops";
 
 
 export default function Collections() {
@@ -77,6 +78,7 @@ export default function Collections() {
     }, []);
 
 
+    const [addMusicModal, setAddMusicModal] = useState(false);
 
     return (
         <>
@@ -86,12 +88,20 @@ export default function Collections() {
                         My Collections
                     </h1>
                     <div>
-                        <button type="button" className="flex gap-x-2 bg-[#FF9500] px-4 py-2 rounded-full font-extrabold hover:bg-[#FF9500]/80">
+                        <button
+                            onClick={
+                                () =>{
+                                    setAddMusicModal(true)
+                                }
+                            }
+                            type="button" className="flex gap-x-2 bg-[#FF9500] px-4 py-2 rounded-full font-extrabold hover:bg-[#FF9500]/80">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 17a3 3 0 1 0 6 0a3 3 0 0 0-6 0m6 0V4h10v8M9 8h10m-3 11h6m-3-3v6" /></svg>
                             New Upload
                         </button>
                     </div>
                 </div>
+
+
                 <div className='backdrop-blur-lg bg-gray-300/10 min-h-[300px] rounded-4xl p-10 space-y-8'>
                     <div className='flex lg:flex-row flex-col lg:gap-0 gap-5 justify-between'>
                         <div className='flex gap-x-8 items-center h-fit'>
@@ -273,7 +283,13 @@ export default function Collections() {
                         </table>
                     </div>
 
-                </div>            </div>
+                </div>
+                {addMusicModal? <MusicUploadModal onClose={() => {
+                    setAddMusicModal(false)
+                }}/> : null}
+
+
+            </div>
         </>
     )
 }

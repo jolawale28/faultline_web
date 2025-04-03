@@ -7,19 +7,14 @@ import Image from 'next/image'
 import Sidebar from './components/layout/SideBar'
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import EditProfileModal from "@/app/admin/components/edit_modal";
 
 export default function AdminRootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-
   const pathname = usePathname();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleChanges = (isEdit: boolean) => {
-    setIsModalOpen(isEdit);
-  };
 
   return (
     <section className="bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center flex gap-5 p-5 h-[calc(100vh)]">
-      <Sidebar onEdit={handleChanges} />
+      <Sidebar />
       <main className="grow shrink h-full flex flex-col gap-y-10 w-full overflow-y-scroll scrollbar-hidden">
         <div className="flex flex-row gap-5 justify-between md:items-center basis-auto">
 

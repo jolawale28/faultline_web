@@ -15,8 +15,8 @@ import NavBar from './components/homepage/NavBar'
 import React, {useEffect, useState} from "react";
 import {collection, getDocs, Timestamp} from "firebase/firestore";
 import {db} from "@/app/firebase/firebaseConfig";
-import {saveEmailToFirestore} from "@/app/firebase/save_email";
 import downloadMusicFromUrl from "@/app/firebase/download_music";
+import Countdown from "@/app/components/ui/release_date";
 
 export default function Home() {
 
@@ -25,7 +25,6 @@ export default function Home() {
     const [beats, setBeats] = useState<Music[]>([]);
     const [music, setMusic] = useState<Music[]>([]);
     const [upcomings, setUpComings] = useState<Music[]>([]);
-    const [email, setEmail] = useState<string>('');
 
     let randomNum = 0;
     const [pickedTab, setPickedTab] = useState('songs');
@@ -115,7 +114,7 @@ randomNum = Math.floor(Math.random() * songLists.length)
 
     return (
     <>
-      <header className="bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center">
+      <div className="bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center">
         <div className='space-y-16 bg-gradient-to-r from-black/80 via-transparent to-transparent h-full px-[20px] screenFrame py-8'>
           <NavBar />
 
@@ -160,7 +159,7 @@ randomNum = Math.floor(Math.random() * songLists.length)
             </div>
           </div>
 
-          <div className='grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-8 mb-5'>
+          <div  className='grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-8 mb-5'>
             <div className='w-full backdrop-blur-md bg-gray-300/10 rounded-2xl p-5 flex flex-col gap-y-2 text-white shadow-[#FF9500]/30 shadow-sm'>
               <div className='font-bold text-lg'>New Release</div>
               <div className='flex gap-x-5'>
@@ -262,9 +261,9 @@ randomNum = Math.floor(Math.random() * songLists.length)
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      <main className=''>
+      <div className='' id={'collection'}>
         <section className='py-24 relative overflow-hidden bg-[#1E1E1E] screenFrame px-[20px]'>
           <div className='size-[230px] absolute -top-24 right-10'>
             <Image src='/images/blob.png' fill objectFit='cover' alt='blob' />
@@ -550,24 +549,7 @@ randomNum = Math.floor(Math.random() * songLists.length)
               </div>
             </div>
 
-            <div className="flex items-center justify-around grow text-center">
-              <div className='text-white flex flex-col'>
-                <div className="lg:text-[64px] text-[40px] h-fit">1</div>
-                <div>Days</div>
-              </div>
-              <div className='text-white flex flex-col'>
-                <div className="lg:text-[64px] text-[40px] h-fit">12</div>
-                <div>Hours</div>
-              </div>
-              <div className='text-white flex flex-col'>
-                <div className="lg:text-[64px] text-[40px] h-fit">34</div>
-                <div>Minutes</div>
-              </div>
-              <div className='text-white flex flex-col'>
-                <div className="lg:text-[64px] text-[40px] h-fit">55</div>
-                <div>Seconds</div>
-              </div>
-            </div>
+              <Countdown targetDate={(new Date(upcomings?.[0]?.post_date.seconds * 1000))?? Date.now()} />
           </div>
         </section>
 
@@ -593,7 +575,7 @@ randomNum = Math.floor(Math.random() * songLists.length)
 
           </div>
         </section>
-      </main>
+      </div>
     </>
   )
 }

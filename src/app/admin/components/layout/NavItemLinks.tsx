@@ -17,11 +17,7 @@ const NavItemLinks = ({ pathname }: { pathname: string }) => {
             href: '/admin/collections',
             icon: <Music4 size={20} color={pathname === ('/admin/collections') ? 'white' : '#807E7E'} />
         },
-        {
-            label: 'Newsletter',
-            href: '/admin/newsletter',
-            icon: <Newspaper size={20} color={pathname === ('/admin/newsletter') ? 'white' : '#807E7E'} />
-        },
+
 
     ]
 
