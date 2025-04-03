@@ -17,6 +17,8 @@ import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/app/firebase/firebaseConfig";
 import downloadMusicFromUrl from "@/app/firebase/download_music";
 import Countdown from "@/app/components/ui/release_date";
+import { useCallback } from 'react';
+
 
 export default function Home() {
 
@@ -26,7 +28,7 @@ export default function Home() {
   const [music, setMusic] = useState<Music[]>([]);
   const [upcomings, setUpComings] = useState<Music[]>([]);
 
-  let randomNum = 0;
+  const randomNum  = Math.floor(Math.random() * songLists.length);
   const [pickedTab, setPickedTab] = useState('songs');
 
   interface Music {
@@ -57,51 +59,55 @@ export default function Home() {
     twitter_link: string;
   }
 
-  const fetchUsers = async (
-    setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
-    setSongLists: React.Dispatch<React.SetStateAction<Music[]>>,
-    setBeats: React.Dispatch<React.SetStateAction<Music[]>>,
-    setUpComings: React.Dispatch<React.SetStateAction<Music[]>>
-  ) => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "music"));
-      const querySnapshotUser = await getDocs(collection(db, "music_user"));
 
-      // Extracting music list
-      const allList: Music[] = querySnapshot.docs.map((doc) => ({
-        ...(doc.data() as Music),
-        id: doc.id,
-      }));
+  const fetchUsers = useCallback(
+      async (
+          setAdmin: React.Dispatch<React.SetStateAction<User[]>>,
+          setSongLists: React.Dispatch<React.SetStateAction<Music[]>>,
+          setBeats: React.Dispatch<React.SetStateAction<Music[]>>,
+          setUpComings: React.Dispatch<React.SetStateAction<Music[]>>,
+          setMusic: React.Dispatch<React.SetStateAction<Music[]>>
+      ) => {
+        try {
+          const querySnapshot = await getDocs(collection(db, "music"));
+          const querySnapshotUser = await getDocs(collection(db, "music_user"));
 
-      // Extracting user details
-      const userDetails: User[] = querySnapshotUser.docs.map((doc) => ({
-        ...(doc.data() as User),
-        id: doc.id,
-      }));
+          // Extracting music list
+          const allList: Music[] = querySnapshot.docs.map((doc) => ({
+            ...(doc.data() as Music),
+            id: doc.id,
+          }));
 
-      // Updating state
-      setAdmin(userDetails);
-      setSongLists(allList);
+          // Extracting user details
+          const userDetails: User[] = querySnapshotUser.docs.map((doc) => ({
+            ...(doc.data() as User),
+            id: doc.id,
+          }));
 
-      // Filtering data
-      const coming = allList.filter((item) => item.musicStatus === "upcoming");
-      const beats = allList.filter((item) => item.musicType === "beat");
-      const music = allList.filter((item) => item.musicType === "music");
+          // Updating state
+          setAdmin(userDetails);
+          setSongLists(allList);
 
-      setBeats(beats);
-      setUpComings(coming);
-      setMusic(music); // Updated this line
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+          // Filtering data
+          const coming = allList.filter((item) => item.musicStatus === "upcoming");
+          const beats = allList.filter((item) => item.musicType === "beat");
+          const music = allList.filter((item) => item.musicType === "music");
+
+          setBeats(beats);
+          setUpComings(coming);
+          setMusic(music);
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        }
+      },
+      []
+  );
 
 
   useEffect(() => {
-    fetchUsers(setAdmin, setSongLists, setBeats, setUpComings).then(() => {
-      randomNum = Math.floor(Math.random() * songLists.length)
-    });
-  }, [fetchUsers]);
+    fetchUsers(setAdmin, setSongLists, setBeats, setUpComings, setMusic).then(()=>{});
+  }, [fetchUsers, setAdmin, setSongLists, setBeats, setUpComings, setMusic]);
+
 
 
   // const handleSubmitEmail = async () => {

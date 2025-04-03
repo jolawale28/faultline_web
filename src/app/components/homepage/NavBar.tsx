@@ -1,5 +1,5 @@
 'use client'
-import { Menu, ShoppingCart, User, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, {useState } from 'react'

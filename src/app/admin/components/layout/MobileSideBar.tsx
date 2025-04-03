@@ -56,7 +56,7 @@ export default function MobileSideBar() {
         fetchUsers(setAdmin,).then(() => {
 
         });
-    }, [fetchUsers]);
+    }, []);
 
 
 

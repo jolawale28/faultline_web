@@ -44,9 +44,7 @@ const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
         const [isPlaying, setIsPlaying] = useState(false);
         const [isMuted, setIsMuted] = useState(false);
         const [currentMusicIndex, setCurrentMusicIndex] = useState(0);
-
-        // console.log('heyyy', (musicList[currentTrackIndex]))
-
+        
         // Initialize current track index
         useEffect(() => {
             if (currentTrackId) {
@@ -55,7 +53,7 @@ const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
             } else if (currentTrackIndex !== undefined) {
                 setCurrentMusicIndex(Math.max(0, Math.min(currentTrackIndex, musicList.length - 1)));
             }
-        }, []);
+        }, [currentTrackId, currentTrackIndex, musicList]);
 
         // Handle track changes
         useEffect(() => {
@@ -67,7 +65,7 @@ const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
                 audioRef.current.load();
             }
             onTrackChange?.(music, currentMusicIndex);
-        }, [currentMusicIndex, musicList]);
+        }, [currentMusicIndex, musicList, onTrackChange]);
 
         // Audio event handlers
         useEffect(() => {
@@ -78,7 +76,7 @@ const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
 
             audio.addEventListener('ended', handleEnded);
             return () => audio.removeEventListener('ended', handleEnded);
-        }, [currentMusicIndex]);
+        }, );
 
         // Expose player controls
         useImperativeHandle(ref, () => ({
