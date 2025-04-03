@@ -31,9 +31,6 @@ const ProtectedAuthComp = <P extends object>(WrappedComponent: ComponentType<P &
             <>
                 <div className="bg-gray-800 flex items-center justify-center h-screen">
                     <div className="flex flex-col justify-center items-center gap-y-5">
-                        {/* <div className="relative size-7">
-                            <Image src="/images/logo.png" alt="app logo" fill objectFit="contain" loading="eager" />
-                        </div> */}
                         <BarLoader color="#FF9500" />
                     </div>
                 </div>

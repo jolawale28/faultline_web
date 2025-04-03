@@ -45,7 +45,7 @@ const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
         const [isMuted, setIsMuted] = useState(false);
         const [currentMusicIndex, setCurrentMusicIndex] = useState(0);
 
-        console.log('heyyy', (musicList[currentTrackIndex]))
+        // console.log('heyyy', (musicList[currentTrackIndex]))
 
         // Initialize current track index
         useEffect(() => {
@@ -173,7 +173,7 @@ const MusicPlayer = forwardRef<MusicPlayerHandle, MusicPlayerProps>(
                     )}
                 </button>
 
-                <audio src = {``} ref={audioRef} className="hidden" />
+                <audio src = {`https://cdn.pixabay.com/download/audio/2025/03/19/audio_56ae1dae5f.mp3?filename=gorila-315977.mp3`} ref={audioRef} className="hidden" />
                 
             </div>
         );
