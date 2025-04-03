@@ -1,13 +1,12 @@
 'use client'
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { CardContent } from "@/app/components/ui/card content";
 import { Card } from "@/app/components/ui/card";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, User } from "firebase/auth";
 import { Id, toast } from 'react-toastify';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
 import { initializeApp } from 'firebase/app';
 
 const firebaseConfig = {
@@ -25,7 +24,7 @@ initializeApp(firebaseConfig);
 
 const SignInScreen = () => {
 
-    const searchParams = useSearchParams()
+    const [, setUser] = useState<User | null>(null)
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -44,6 +43,7 @@ const SignInScreen = () => {
                 .then((userCredential) => {
                     // Signed in
                     const user = userCredential.user;
+                    setUser(user)
                     
                     if (toastNotif.current) {
                         toast.dismiss(toastNotif.current)
@@ -63,15 +63,6 @@ const SignInScreen = () => {
                 })
         })
     };
-
-    useEffect(() => {
-        if (searchParams.get('unauthorised')) {
-            if (toastNotif.current) {
-                toast.dismiss(toastNotif.current)
-            }
-            toastNotif.current = toast.info('Unauthorised! You have to be logged in.', {hideProgressBar: false, autoClose: 5000})
-        }
-    }, [])
 
     return (
         <div className=" bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center flex items-center justify-center min-h-screen">

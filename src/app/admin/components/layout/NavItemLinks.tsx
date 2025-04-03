@@ -1,5 +1,5 @@
 import { getAuth, signOut } from "firebase/auth";
-import { House, Loader, Loader2, Music4, Newspaper, PanelLeftClose } from "lucide-react";
+import { House, Loader, Music4, Newspaper, PanelLeftClose } from "lucide-react";
 import Link from "next/link";
 import { JSX, useRef, useState, useTransition } from "react";
 import { Id, toast } from "react-toastify";

@@ -90,11 +90,11 @@ export default function Collections() {
                 </div>
                 <div className='backdrop-blur-lg bg-gray-300/10 min-h-[300px] rounded-4xl p-10 space-y-8'>
                     <div className='flex lg:flex-row flex-col lg:gap-0 gap-5 justify-between'>
-                        <div className='flex gap-x-8 items-center h-fit'>
+                        <div className='flex gap-x-0 items-center h-fit'>
                             <button
                                 title='All Music'
                                 type='button'
-                                className={`border - 2 px-5 py-2 ${pickedTab === 'songs' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                                className={`cursor-pointer border px-5 py-2 ${pickedTab === 'songs' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-s-full`}
                                 onClick={() => {
                                     setPickedTab('songs')
                                 }}
@@ -104,7 +104,7 @@ export default function Collections() {
                             <button
                                 title='My Beats'
                                 type='button'
-                                className={`border - 2 px-5 py-2 ${pickedTab === 'beats' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                                className={`cursor-pointer border px-5 py-2 ${pickedTab === 'beats' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold`}
                                 onClick={() => {
                                     setPickedTab('beats')
                                 }}
@@ -114,7 +114,7 @@ export default function Collections() {
                             <button
                                 title='My Songs'
                                 type='button'
-                                className={`border - 2 px-5 py-2 ${pickedTab === 'albums' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-full`}
+                                className={`cursor-pointer border px-5 py-2 ${pickedTab === 'albums' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-e-full`}
                                 onClick={() => {
                                     setPickedTab('albums')
                                 }}
