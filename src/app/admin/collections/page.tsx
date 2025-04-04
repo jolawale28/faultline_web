@@ -301,7 +301,7 @@ export default function Collections() {
                                                         </div>
                                                     </td>
                                                     <td className='py-2 whitespace-nowrap '>
-                                                        <button onClick={playMusic} className='flex justify-end'>
+                                                        <button onClick={playMusic} title="Play Music" className='flex justify-end'>
                                                             <PlayCircleIcon />
                                                         </button>
                                                     </td>
