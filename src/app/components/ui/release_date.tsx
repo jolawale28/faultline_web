@@ -5,6 +5,10 @@ interface CountdownProps {
 }
 
 function getTimeRemaining(targetDate: Date) {
+    if (!(targetDate instanceof Date) || isNaN(targetDate.getTime())) {
+        return { total: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+    
     const now = new Date();
     const total = Math.max(0, targetDate.getTime() - now.getTime());
     const seconds = Math.floor((total / 1000) % 60);

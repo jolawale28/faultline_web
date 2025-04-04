@@ -13,12 +13,12 @@ import Link from 'next/link'
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './Icons'
 import NavBar from './components/homepage/NavBar'
 import React, { useEffect, useState } from "react";
-import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/app/firebase/firebaseConfig";
 import downloadMusicFromUrl from "@/app/firebase/download_music";
 import Countdown from "@/app/components/ui/release_date";
 import { useCallback } from 'react';
-
+import { Music, User } from './models/MusicTypes'
 
 export default function Home() {
 
@@ -30,35 +30,6 @@ export default function Home() {
 
   const randomNum  = Math.floor(Math.random() * songLists.length);
   const [pickedTab, setPickedTab] = useState('songs');
-
-  interface Music {
-    id: string;
-    musicStatus?: string;
-    musicType?: string;
-    cover_image: string;
-    feats: string;
-    price: number;
-    music_name: string;
-    link: string;
-    post_date: Timestamp;
-  }
-
-
-
-  interface User {
-    id: string;
-    about_me: string;
-    downloads: never;
-    facebook_link: string;
-    first_name: string;
-    last_name: string;
-    instagram_link: string;
-    profile_image: string;
-    tiktok_link: string;
-    youtube_link: string;
-    twitter_link: string;
-  }
-
 
   const fetchUsers = useCallback(
       async (
@@ -103,12 +74,9 @@ export default function Home() {
       []
   );
 
-
   useEffect(() => {
     fetchUsers(setAdmin, setSongLists, setBeats, setUpComings, setMusic).then(()=>{});
   }, [fetchUsers, setAdmin, setSongLists, setBeats, setUpComings, setMusic]);
-
-
 
   // const handleSubmitEmail = async () => {
   //     try {
@@ -178,7 +146,7 @@ export default function Home() {
                   />
                 </div>
                 <div className='flex flex-col justify-between grow text-sm'>
-                  <div className='font-bold text-base'>{songLists?.[0]?.music_name ?? ''}</div>
+                  <div className='font-bold text-base'>{songLists?.[0]?.musicName ?? ''}</div>
                   <div>{songLists?.[0]?.feats ?? ''}</div>
                   <div>{songLists?.[0]?.musicType ?? ''}</div>
                   <div className='flex justify-between items-center'>
@@ -208,7 +176,7 @@ export default function Home() {
                   />
                 </div>
                 <div className='flex flex-col justify-between grow text-sm'>
-                  <div className='font-bold text-base'>{beats?.[0]?.music_name ?? ''}</div>
+                  <div className='font-bold text-base'>{beats?.[0]?.musicName ?? ''}</div>
                   <div>{beats?.[0]?.feats ?? ''}</div>
                   <div>{beats?.[0]?.musicType ?? ''}</div>
                   <div className='flex justify-between items-center'>
@@ -243,7 +211,7 @@ export default function Home() {
                   <div className='font-bold text-base'>
                     {music?.[randomNum]?.feats ?? ''}
                   </div>
-                  <div>{music?.[randomNum]?.music_name}</div>
+                  <div>{music?.[randomNum]?.musicName}</div>
                   <div>{music?.[randomNum]?.musicType}</div>
                   <div className='flex justify-between items-center'>
                     <div className='flex items-center gap-x-2'>
@@ -254,7 +222,7 @@ export default function Home() {
                       onClick={() => {
                         downloadMusicFromUrl(
                           music?.[randomNum]?.link,
-                          music?.[randomNum]?.music_name
+                          music?.[randomNum]?.musicName
                         );
                       }}
                       className='py-2 px-4 rounded-full border border-white text-white hover:bg-white hover:text-black transition-colors font-bold'
@@ -347,7 +315,7 @@ export default function Home() {
                       songLists.map((ele, idx) => (
                         <tr key={`list_of_songs_${idx}`}>
                           <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
-                            {ele.music_name}.
+                            {ele.musicName}.
                           </td>
                           <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
                             <div className='relative size-[48px] rounded-xl overflow-hidden'>
@@ -359,7 +327,7 @@ export default function Home() {
                               />
                             </div>
                             <div className='flex gap-x-3'>
-                              <span className='font-bold'>{ele.music_name}</span>{' '}
+                              <span className='font-bold'>{ele.musicName}</span>{' '}
                               <span className='font-light opacity-40'>
                                 {ele.feats}
                               </span>
@@ -390,7 +358,7 @@ export default function Home() {
                       beats.map((ele, idx) => (
                         <tr key={`list_of_songs_${idx}`}>
                           <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
-                            {ele.music_name}.
+                            {ele.musicName}.
                           </td>
                           <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
                             <div className='relative size-[48px] rounded-xl overflow-hidden'>
@@ -402,7 +370,7 @@ export default function Home() {
                               />
                             </div>
                             <div className='flex gap-x-3'>
-                              <span className='font-bold'>{ele.music_name}</span>{' '}
+                              <span className='font-bold'>{ele.musicName}</span>{' '}
                               <span className='font-light opacity-40'>
                                 {ele.feats}
                               </span>
@@ -433,7 +401,7 @@ export default function Home() {
                       music.map((ele, idx) => (
                         <tr key={`list_of_songs_${idx}`}>
                           <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
-                            {ele.music_name}.
+                            {ele.musicName}.
                           </td>
                           <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
                             <div className='relative size-[48px] rounded-xl overflow-hidden'>
@@ -445,7 +413,7 @@ export default function Home() {
                               />
                             </div>
                             <div className='flex gap-x-3'>
-                              <span className='font-bold'>{ele.music_name}</span>{' '}
+                              <span className='font-bold'>{ele.musicName}</span>{' '}
                               <span className='font-light opacity-40'>
                                 {ele.feats}
                               </span>
@@ -536,7 +504,7 @@ export default function Home() {
                   />
                 </div>
                 <div className='flex flex-col justify-between grow text-sm'>
-                  <div className='font-bold text-base'>{upcomings?.[0]?.music_name ?? ''}</div>
+                  <div className='font-bold text-base'>{upcomings?.[0]?.musicName ?? ''}</div>
                   <div>{upcomings?.[0]?.feats ?? ''}</div>
                   <div>{upcomings?.[0]?.musicType ?? ''}</div>
                   <div className='flex justify-between items-center'>

@@ -15,7 +15,7 @@ interface MusicPlayerProps {
 
 const MusicPlayer = (props: MusicPlayerProps) => {
 
-    const { playList, musicType, playingItem, setPlayingItem, isPlaying, setIsPlaying } = props
+    const { playingItem, setPlayingItem, isPlaying, setIsPlaying } = props
 
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isBuffering, setIsBuffering] = useState(false)

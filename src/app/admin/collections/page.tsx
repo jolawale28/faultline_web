@@ -1,9 +1,9 @@
 'use client'
 
-import {CircleDollarSign, DeleteIcon, Loader, PlayCircleIcon, Trash} from "lucide-react";
+import {CircleDollarSign, Loader, PlayCircleIcon, Trash} from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useRef, useState, useTransition } from "react";
-import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/app/firebase/firebaseConfig";
 import MusicUploadModal from "@/app/admin/components/muiscUploadModalPops";
 import {deleteMusicFromDatabase} from "@/app/firebase/delete_music";
@@ -17,7 +17,6 @@ export default function Collections() {
     const [songLists, setSongLists] = useState<Music[]>([]);
     const [beats, setBeats] = useState<Music[]>([]);
     const [music, setMusic] = useState<Music[]>([]);
-    const [musicPlay, setMusicPlay] = useState<Music[]>([]);
     const [isUploadModal, setIsUploadModal] = useState(false);
     const [, setLoading] = useState(false);
     const toastNotif = useRef<Id | null>(null)
@@ -186,7 +185,7 @@ export default function Collections() {
                                                         <div className="flex justify-end">
                                                             <button type="button" onClick={() => setPlayingMusic(ele)} className='flex justify-end cursor-pointer'>
                                                                 {
-                                                                    playingMusic?.id == ele.id ? (
+                                                                    playingMusic?.id == ele.id && isPlaying ? (
                                                                         <ScaleLoader color="#FF9500" width={2.5} height={10} speedMultiplier={1.2} />
                                                                     ) : (
                                                                         <PlayCircleIcon />
@@ -246,7 +245,7 @@ export default function Collections() {
                                                         <div className="flex justify-end">
                                                             <button type="button" onClick={() => setPlayingMusic(ele)} className='flex justify-end cursor-pointer'>
                                                                 {
-                                                                    playingMusic?.id == ele.id ? (
+                                                                    playingMusic?.id == ele.id && isPlaying ? (
                                                                         <ScaleLoader color="#FF9500" width={2.5} height={10} speedMultiplier={1.2} />
                                                                     ) : (
                                                                         <PlayCircleIcon />

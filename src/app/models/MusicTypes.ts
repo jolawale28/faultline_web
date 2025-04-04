@@ -12,3 +12,17 @@ export interface Music {
     link: string;
     post_date: Timestamp;
 }
+
+export interface User {
+    id: string;
+    about_me: string;
+    downloads: never;
+    facebook_link: string;
+    first_name: string;
+    last_name: string;
+    instagram_link: string;
+    profile_image: string;
+    tiktok_link: string;
+    youtube_link: string;
+    twitter_link: string;
+}
