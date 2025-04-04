@@ -1,7 +1,7 @@
 'use client';
 
 import { Music } from "@/app/models/MusicTypes";
-import { CircleAlert, Pause, Play, SkipBack, SkipForward, Volume2, VolumeX } from "lucide-react";
+import { Pause, Play, SkipBack, SkipForward, Volume2, VolumeX } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 
 interface MusicPlayerProps {
@@ -9,15 +9,16 @@ interface MusicPlayerProps {
     musicType: string;
     playingItem: Music | null;
     setPlayingItem: Dispatch<SetStateAction<Music | null>>;
+    isPlaying: boolean;
+    setIsPlaying: Dispatch<SetStateAction<boolean>>;
 }
 
 const MusicPlayer = (props: MusicPlayerProps) => {
 
-    const { playList, musicType, playingItem, setPlayingItem } = props
+    const { playList, musicType, playingItem, setPlayingItem, isPlaying, setIsPlaying } = props
 
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isBuffering, setIsBuffering] = useState(false)
-    const [isPlaying, setIsPlaying] = useState(false)
     const [isMuted, setisMuted] = useState(false)
 
     const playMusic = () => {

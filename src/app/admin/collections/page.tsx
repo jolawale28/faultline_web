@@ -16,6 +16,7 @@ export default function Collections() {
     const [music, setMusic] = useState<Music[]>([]);
 
     const [playingMusic, setPlayingMusic] = useState<Music | null>(null)
+    const [isPlaying, setIsPlaying] = useState(false)
 
     const [pickedTab, setPickedTab] = useState('music');
 
@@ -88,7 +89,14 @@ export default function Collections() {
                                 My Beats
                             </button>
                         </div>
-                        <MusicPlayer playList={songLists} musicType={pickedTab} playingItem={playingMusic} setPlayingItem = {setPlayingMusic} />
+                        <MusicPlayer 
+                            playList={songLists} 
+                            musicType={pickedTab} 
+                            playingItem={playingMusic} 
+                            setPlayingItem = {setPlayingMusic} 
+                            isPlaying = {isPlaying}
+                            setIsPlaying = {setIsPlaying}
+                        />
 
                     </div>
 
