@@ -1,14 +1,17 @@
 'use client'
 
-import {CircleDollarSign, DeleteIcon, Loader, PlayCircleIcon} from "lucide-react";
+import {CircleDollarSign, DeleteIcon, Loader, PlayCircleIcon, Trash} from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useRef, useState, useTransition } from "react";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/app/firebase/firebaseConfig";
-import MusicPlayer, { MusicPlayerHandle } from "@/app/components/ui/music_bar";
 import MusicUploadModal from "@/app/admin/components/muiscUploadModalPops";
 import {deleteMusicFromDatabase} from "@/app/firebase/delete_music";
 import {Id, toast} from "react-toastify";
+import MusicPlayer from "@/app/components/ui/music_bar";
+import { Music } from "@/app/models/MusicTypes";
+import { ScaleLoader } from "react-spinners";
+
 export default function Collections() {
 
     const [songLists, setSongLists] = useState<Music[]>([]);
@@ -18,35 +21,19 @@ export default function Collections() {
     const [isUploadModal, setIsUploadModal] = useState(false);
     const [, setLoading] = useState(false);
     const toastNotif = useRef<Id | null>(null)
-    const [pickedTab, setPickedTab] = useState('songs');
-
-    interface Music {
-        id: string;
-        musicStatus?: string;
-        musicType?: string;
-        cover_image: string;
-        feats: string;
-        price: number;
-        music_name: string;
-        link: string;
-        post_date: Timestamp;
-    }
-
-    const playerRef = useRef<MusicPlayerHandle>(null);
-
-    const handleTrackChange = (music: typeof musicPlay[0], index: number) => {
-        console.log(`Now playing: ${music.music_name} at index ${index}`);
-    };
-
-    const playMusic = () => {
-        playerRef.current?.play();
-    };
 
     const [, startDeleteFunc] = useTransition()
 
+    const [playingMusic, setPlayingMusic] = useState<Music | null>(null)
+    const [isPlaying, setIsPlaying] = useState(false)
+
+    const [pickedTab, setPickedTab] = useState('music');
+
     const [fetchingMusic, startMusicFetch] = useTransition()
     useEffect(() => {
+
         (() => {
+            console.log(playingMusic)
             startMusicFetch(async () => {
                 try {
                     const querySnapshot = await getDocs(collection(db, "music"));
@@ -56,16 +43,14 @@ export default function Collections() {
                     }));
 
                     setSongLists(allList);
+                    console.log(allList)
 
                     // Filtering data
                     const beats = allList.filter((item) => item.musicType === "beat");
                     const music = allList.filter((item) => item.musicType === "music");
 
-                    console.log(beats)
-
                     setBeats(beats);
                     setMusic(music);
-                    setMusicPlay(music)
                 } catch (error) {
                     console.error("Error fetching:", error);
                 }
@@ -121,42 +106,33 @@ export default function Collections() {
                             <button
                                 title='All Music'
                                 type='button'
-                                className={`cursor-pointer border px-5 py-2 ${pickedTab === 'songs' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-s-full`}
+                                className={`cursor-pointer border px-5 py-2 ${pickedTab === 'music' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-s-full`}
                                 onClick={() => {
-                                    setPickedTab('songs')
+                                    setPickedTab('music')
                                 }}
-                                disabled = {fetchingMusic}
+                                disabled={fetchingMusic}
                             >
                                 My Songs
                             </button>
                             <button
                                 title='My Beats'
                                 type='button'
-                                className={`cursor-pointer border px-5 py-2 ${pickedTab === 'beats' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold`}
+                                className={`cursor-pointer border px-5 py-2 ${pickedTab === 'beat' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-e-full`}
                                 onClick={() => {
-                                    setPickedTab('beats')
+                                    setPickedTab('beat')
                                 }}
-                                disabled = {fetchingMusic}
+                                disabled={fetchingMusic}
                             >
                                 My Beats
                             </button>
-                            <button
-                                title='My Songs'
-                                type='button'
-                                className={`cursor-pointer border px-5 py-2 ${pickedTab === 'albums' ? 'border-[#FF9500] text-[#FF9500]' : 'border-white text-white hover:border-[#FF9500] hover:text-[#FF9500]'} font-bold rounded-e-full`}
-                                onClick={() => {
-                                    setPickedTab('albums')
-                                }}
-                                disabled = {fetchingMusic}
-                            >
-                                My Albums
-                            </button>
                         </div>
-                        <MusicPlayer
-                            ref={playerRef}
-                            musicList={musicPlay}
-                            currentTrackIndex={0}
-                            onTrackChange={handleTrackChange}
+                        <MusicPlayer 
+                            playList={songLists} 
+                            musicType={pickedTab} 
+                            playingItem={playingMusic} 
+                            setPlayingItem = {setPlayingMusic} 
+                            isPlaying = {isPlaying}
+                            setIsPlaying = {setIsPlaying}
                         />
 
                     </div>
@@ -169,15 +145,15 @@ export default function Collections() {
 
                     {
                         !fetchingMusic && (
-                            <div className='overflow-x-scroll scrollbar-hide'>
+                            <div className='overflow-x-scroll scrollbar-hidden'>
                                 <table className='w-full divide-gray-200'>
                                     <tbody className='bg-transparent text-white'>
                                         {
-                                            pickedTab === 'songs' &&
-                                            songLists.map((ele, idx) => (
-                                                <tr key={`list_of_songs_${idx}`}>
+                                            pickedTab === 'music' &&
+                                            music.map((ele, idx) => (
+                                                <tr key={`list_of_songs_${idx}`} className="">
                                                     <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
-                                                        {ele.music_name}.
+                                                        {idx + 1}.
                                                     </td>
                                                     <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
                                                         <div className='relative size-[48px] rounded-xl overflow-hidden'>
@@ -189,15 +165,15 @@ export default function Collections() {
                                                             />
                                                         </div>
                                                         <div className='flex gap-x-3'>
-                                                            <span className='font-bold'>{ele.music_name}</span>{' '}
+                                                            <span className='font-bold'>{ele.musicName}</span>{' '}
                                                             <span className='font-light opacity-40'>
                                                                 {ele.feats}
                                                             </span>
                                                         </div>
                                                     </td>
 
-                                                    <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
-                                                        <div className='flex justify-center'>
+                                                    <td valign='middle' className='py-2 whitespace-nowrap text-center min-w-[200px]'>
+                                                        <div className='flex justify-center items-center'>
                                                             <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
                                                                 <CircleDollarSign size={18} color='black' />
                                                                 <span className='text-black text-sm font-black mt-1'>
@@ -206,9 +182,18 @@ export default function Collections() {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className='py-2 whitespace-nowrap '>
-                                                        <div className='flex justify-end'>
-                                                            <PlayCircleIcon />
+                                                    <td className='py-2 whitespace-nowrap'>
+                                                        <div className="flex justify-end">
+                                                            <button type="button" onClick={() => setPlayingMusic(ele)} className='flex justify-end cursor-pointer'>
+                                                                {
+                                                                    playingMusic?.id == ele.id ? (
+                                                                        <ScaleLoader color="#FF9500" width={2.5} height={10} speedMultiplier={1.2} />
+                                                                    ) : (
+                                                                        <PlayCircleIcon />
+                                                                    )
+                                                                }
+
+                                                            </button>
                                                         </div>
                                                     </td>
 
@@ -216,7 +201,7 @@ export default function Collections() {
                                                         <div onClick={() => {
                                                             handleDelete(ele.id)
                                                         }} className='flex justify-end'>
-                                                            <DeleteIcon />
+                                                            <Trash />
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -224,11 +209,11 @@ export default function Collections() {
                                         }
 
                                         {
-                                            pickedTab === 'beats' &&
+                                            pickedTab === 'beat' &&
                                             beats.map((ele, idx) => (
                                                 <tr key={`list_of_songs_${idx}`}>
                                                     <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
-                                                        {ele.music_name}.
+                                                        {idx + 1}.
                                                     </td>
                                                     <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
                                                         <div className='relative size-[48px] rounded-xl overflow-hidden'>
@@ -240,7 +225,7 @@ export default function Collections() {
                                                             />
                                                         </div>
                                                         <div className='flex gap-x-3'>
-                                                            <span className='font-bold'>{ele.music_name}</span>{' '}
+                                                            <span className='font-bold'>{ele.musicName}</span>{' '}
                                                             <span className='font-light opacity-40'>
                                                                 {ele.feats}
                                                             </span>
@@ -257,57 +242,31 @@ export default function Collections() {
                                                             </div>
                                                         </div>
                                                     </td>
+                                                    <td className='py-2 whitespace-nowrap'>
+                                                        <div className="flex justify-end">
+                                                            <button type="button" onClick={() => setPlayingMusic(ele)} className='flex justify-end cursor-pointer'>
+                                                                {
+                                                                    playingMusic?.id == ele.id ? (
+                                                                        <ScaleLoader color="#FF9500" width={2.5} height={10} speedMultiplier={1.2} />
+                                                                    ) : (
+                                                                        <PlayCircleIcon />
+                                                                    )
+                                                                }
+
+                                                            </button>
+                                                        </div>
+                                                    </td>
                                                     <td className='py-2 whitespace-nowrap '>
-                                                        <div className='flex justify-end'>
-                                                            <PlayCircleIcon />
+                                                        <div onClick={() => {
+                                                            handleDelete(ele.id)
+                                                        }} className='flex justify-end'>
+                                                            <Trash />
                                                         </div>
                                                     </td>
                                                 </tr>
                                             ))
                                         }
 
-                                        {
-                                            pickedTab === 'albums' &&
-                                            music.map((ele, idx) => (
-                                                <tr key={`list_of_songs_${idx}`}>
-                                                    <td className='py-2 pr-4 whitespace-nowrap font-extrabold w-[10px] sticky top-0 left-0'>
-                                                        {ele.music_name}.
-                                                    </td>
-                                                    <td className='py-2 flex gap-x-3 items-center min-w-[300px] sticky top-0 left-0'>
-                                                        <div className='relative size-[48px] rounded-xl overflow-hidden'>
-                                                            <Image
-                                                                src={ele?.cover_image ?? '/images/defult_music_image.png'}
-                                                                fill
-                                                                objectFit='cover'
-                                                                alt='music_image'
-                                                            />
-                                                        </div>
-                                                        <div className='flex gap-x-3'>
-                                                            <span className='font-bold'>{ele.music_name}</span>{' '}
-                                                            <span className='font-light opacity-40'>
-                                                                {ele.feats}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-
-                                                    <td className='py-2 whitespace-nowrap text-center min-w-[200px]'>
-                                                        <div className='flex justify-center'>
-                                                            <div className='bg-white px-2 py-1 w-fit rounded-full flex gap-x-3 items-center justify-between'>
-                                                                <CircleDollarSign size={18} color='black' />
-                                                                <span className='text-black text-sm font-black mt-1'>
-                                                                    {ele.price}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className='py-2 whitespace-nowrap '>
-                                                        <button onClick={playMusic} title="Play Music" className='flex justify-end'>
-                                                            <PlayCircleIcon />
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        }
                                     </tbody>
                                 </table>
                             </div>
