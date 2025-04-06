@@ -48,7 +48,7 @@ const MusicPlayer = (props: MusicPlayerProps) => {
                 setIsPlaying(true)
             }
         }
-    }, [playingItem])
+    }, [playingItem, setIsPlaying])
 
     return (
         <div className={`bg-black/40 lg:basis-1/2 basis-auto h-fit py-2 px-8 border-[1.5px] ${!playingItem ? 'border-white/20' : 'border-white'} rounded-full flex items-center justify-between`}>

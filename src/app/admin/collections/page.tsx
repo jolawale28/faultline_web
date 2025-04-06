@@ -55,7 +55,7 @@ export default function Collections() {
                 }
             })
         })()
-    }, []);
+    }, [playingMusic]);
 
 
     const handleDelete = (id : string) => {

@@ -1,4 +1,8 @@
+import {addDownloadClick} from "@/app/firebase/download_clicks";
+
 function downloadMusicFromUrl(url: string, fileName: string = 'music.mp3') {
+
+    addDownloadClick();
     try {
         // Create a temporary link element
         const a = document.createElement('a');

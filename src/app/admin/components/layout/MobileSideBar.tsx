@@ -2,13 +2,13 @@
 
 import { Menu, PencilLine, X } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { AnimatePresence, motion } from 'framer-motion';
 import React, {useEffect, useState} from "react";
 import NavItemLinks from "./NavItemLinks";
 import { usePathname } from "next/navigation";
 import {collection, getDocs} from "firebase/firestore";
 import {db} from "@/app/firebase/firebaseConfig";
+import EditProfileModal from "@/app/admin/components/edit_modal";
 interface User {
     id: string;
     about_me: string;
@@ -27,6 +27,7 @@ export default function MobileSideBar() {
 
     const pathname: string = usePathname()
     const [showSidebar, setShowSidebar] = useState<boolean>(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [admin, setAdmin] = useState<User[]>([]);
 
     const fetchUsers = async (
@@ -84,17 +85,25 @@ export default function MobileSideBar() {
                                         </div>
                                         <h2 className="font-extrabold text-base text-white"> {`${admin?.[0]?.first_name ?? `Duv `} ${admin?.[0]?.last_name  ?? `Mac`}`}</h2>
                                         <div>
-                                            <Link className="bg-[#FF9500] px-4 py-2 rounded-full flex gap-x-2" href="/">
+                                            <button onClick={()=>{
+                                                // setShowSidebar(false);
+                                                setIsModalOpen(true);
+                                            }}  className="bg-[#FF9500] px-4 py-2 rounded-full flex gap-x-2" >
                                                 <PencilLine size={20} />
                                                 <span>Edit</span>
-                                            </Link>
+                                            </button>
                                         </div>
                                     </div>
-                                    <nav className="bg-black rounded-xl py-5">
+
+
+                                       <EditProfileModal onClose={() => {setIsModalOpen(false)}} userId={'x7Qd21eDuN1YiRgcpZ2f'} isOpen={isModalOpen} />
+
+
+                                    {isModalOpen? null: <nav className="bg-black rounded-xl py-5">
                                         <ul>
-                                            <NavItemLinks pathname={pathname} />
+                                            <NavItemLinks pathname={pathname}/>
                                         </ul>
-                                    </nav>
+                                    </nav>}
                                 </div>
                             </motion.aside>
                         )

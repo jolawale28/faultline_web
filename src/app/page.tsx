@@ -6,7 +6,7 @@ import {
   PlayCircleIcon,
   SkipBack,
   SkipForward,
-  Volume2
+  Volume2, XIcon
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -19,6 +19,7 @@ import downloadMusicFromUrl from "@/app/firebase/download_music";
 import Countdown from "@/app/components/ui/release_date";
 import { useCallback } from 'react';
 import { Music, User } from './models/MusicTypes'
+import {addSocialMediaClick} from "@/app/firebase/social_media_clicks";
 
 export default function Home() {
 
@@ -30,6 +31,8 @@ export default function Home() {
 
   const randomNum  = Math.floor(Math.random() * songLists.length);
   const [pickedTab, setPickedTab] = useState('songs');
+
+
 
   const fetchUsers = useCallback(
       async (
@@ -86,6 +89,8 @@ export default function Home() {
   //     }
   // };
 
+
+
   return (
     <>
       <header className="bg-[url('/images/hero_wallpaper.png')] bg-cover bg-center">
@@ -101,17 +106,17 @@ export default function Home() {
                 world will hear your colors.
               </div>
               <div className='flex gap-x-10 items-center'>
-                <Link href={admin?.[0]?.instagram_link ?? ``}>
+                <Link href={admin?.[0]?.instagram_link ?? ``} onClick={()=>{addSocialMediaClick();}}>
                   <InstagramIcon width={24} height={24} />
                 </Link>
-                <Link href={admin?.[0]?.facebook_link ?? ``}>
+                <Link href={admin?.[0]?.facebook_link ?? ``} onClick={()=>{addSocialMediaClick();}}>
                   <FacebookIcon width={24} height={24} />
                 </Link>
-                <Link href={admin?.[0]?.youtube_link ?? ``}>
+                <Link href={admin?.[0]?.youtube_link ?? ``} onClick={()=>{addSocialMediaClick();}}>
                   <YoutubeIcon width={24} height={24} />
                 </Link>
-                <Link href={admin?.[0]?.twitter_link ?? ``}>
-                  <FacebookIcon width={24} height={24} />
+                <Link href={admin?.[0]?.twitter_link ?? ``} onClick={()=>{addSocialMediaClick();}}>
+                  <XIcon width={24} height={24} />
                 </Link>
               </div>
               <Link
